@@ -1,0 +1,20 @@
+{
+  "name": "Livraria Digital - Sistema de Vendas",
+  "short_name": "Livraria",
+  "description": "Sistema PWA para venda presencial de livros",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "books", "retail"],
+  "lang": "pt-BR"
+}
