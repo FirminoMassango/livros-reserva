@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { DollarSign, BookCheck, TrendingUp, Users, Calendar, Package } from "lucide-react";
-import { SalesData } from "@/types/book";
-import { useAuth } from "@/contexts/AuthContext";
+import { SalesData } from "@/hooks/useSales";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 
 interface EnhancedDashboardProps {
   salesData: SalesData;
@@ -13,7 +13,7 @@ interface EnhancedDashboardProps {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
 export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, profile } = useSupabaseAuth();
 
   // Prepare chart data
   const categoryData = Object.entries(salesData.salesByCategory).map(([category, sales]) => ({
@@ -31,7 +31,7 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
   const recentSalesData = salesData.recentSales.slice(0, 7).map((sale, index) => ({
     day: `Dia ${index + 1}`,
     vendas: sale.quantity,
-    receita: sale.totalPrice
+    receita: sale.total_price
   }));
 
   return (

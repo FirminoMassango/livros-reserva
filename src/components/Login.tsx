@@ -5,32 +5,32 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, UserPlus, LogIn } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useToast } from '@/hooks/use-toast';
 
 export function Login() {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const { login, register } = useAuth();
+  const { signIn, signUp } = useSupabaseAuth();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    const success = await login(loginData.email, loginData.password);
+    const { error } = await signIn(loginData.email, loginData.password);
     
-    if (success) {
+    if (error) {
       toast({
-        title: "Login realizado com sucesso!",
-        description: "Bem-vindo de volta!",
+        title: "Erro no login",
+        description: error.message || "Email ou senha incorretos.",
+        variant: "destructive"
       });
     } else {
       toast({
-        title: "Erro no login",
-        description: "Email ou senha incorretos.",
-        variant: "destructive"
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo de volta!",
       });
     }
     
@@ -41,18 +41,18 @@ export function Login() {
     e.preventDefault();
     setIsLoading(true);
     
-    const success = await register(registerData.name, registerData.email, registerData.password);
+    const { error } = await signUp(registerData.email, registerData.password, registerData.name);
     
-    if (success) {
+    if (error) {
       toast({
-        title: "Conta criada com sucesso!",
-        description: "Você já está logado e pronto para vender!",
+        title: "Erro no cadastro",
+        description: error.message || "Não foi possível criar a conta.",
+        variant: "destructive"
       });
     } else {
       toast({
-        title: "Erro no cadastro",
-        description: "Este email já está em uso.",
-        variant: "destructive"
+        title: "Conta criada com sucesso!",
+        description: "Você já está logado e pronto para vender!",
       });
     }
     
@@ -120,7 +120,7 @@ export function Login() {
                 </form>
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    <strong>Teste:</strong> admin@livraria.com / admin123
+                    <strong>Teste:</strong> admin@admin.com / admin123
                   </p>
                 </div>
               </CardContent>

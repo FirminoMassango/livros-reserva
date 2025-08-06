@@ -1,4 +1,4 @@
-import { Book } from "@/types/book";
+import { Book } from "@/hooks/useBooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, DollarSign } from "lucide-react";

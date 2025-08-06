@@ -2,13 +2,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useToast } from '@/hooks/use-toast';
 import { LogOut, User, Shield, Calendar, Mail, BarChart3 } from 'lucide-react';
 
 export function ProfilePage() {
-  const { user, logout, isAdmin } = useAuth();
+  const { profile, signOut, isAdmin } = useSupabaseAuth();
+  const { toast } = useToast();
 
-  if (!user) return null;
+  const handleLogout = async () => {
+    await signOut();
+    toast({
+      title: "Logout realizado",
+      description: "Até logo!",
+    });
+  };
+
+  if (!profile) return null;
 
   return (
     <div className="space-y-6 pb-20">
@@ -29,7 +39,7 @@ export function ProfilePage() {
             </div>
             <div className="flex-1">
               <CardTitle className="flex items-center gap-2">
-                {user.name}
+                {profile.name}
                 {isAdmin && (
                   <Badge variant="default" className="gap-1">
                     <Shield className="w-3 h-3" />
@@ -39,7 +49,7 @@ export function ProfilePage() {
               </CardTitle>
               <CardDescription className="flex items-center gap-1 mt-1">
                 <Mail className="w-4 h-4" />
-                {user.email}
+                {profile.email}
               </CardDescription>
             </div>
           </div>
@@ -70,7 +80,7 @@ export function ProfilePage() {
               <span className="text-sm">Membro desde</span>
             </div>
             <span className="text-sm text-muted-foreground">
-              {new Date(user.createdAt).toLocaleDateString('pt-BR')}
+              {new Date(profile.created_at).toLocaleDateString('pt-BR')}
             </span>
           </div>
 
@@ -123,7 +133,7 @@ export function ProfilePage() {
           <Button 
             variant="destructive" 
             className="w-full gap-2" 
-            onClick={logout}
+            onClick={handleLogout}
           >
             <LogOut className="w-4 h-4" />
             Sair da Conta
