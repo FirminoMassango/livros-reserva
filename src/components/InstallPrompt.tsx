@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download, X, Smartphone } from 'lucide-react';
+import { Download, X, Smartphone, Share } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -15,8 +15,18 @@ interface BeforeInstallPromptEvent extends Event {
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isInStandaloneMode, setIsInStandaloneMode] = useState(false);
 
   useEffect(() => {
+    // Detectar iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(iOS);
+    
+    // Detectar se já está em modo standalone
+    const standalone = window.matchMedia('(display-mode: standalone)').matches;
+    setIsInStandaloneMode(standalone);
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -25,9 +35,15 @@ export function InstallPrompt() {
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setShowPrompt(false);
+    // Para iOS, mostrar prompt após um tempo se não estiver instalado
+    if (iOS && !standalone) {
+      const timer = setTimeout(() => {
+        const dismissed = localStorage.getItem('installPromptDismissed');
+        if (!dismissed || (Date.now() - parseInt(dismissed)) > (24 * 60 * 60 * 1000)) {
+          setShowPrompt(true);
+        }
+      }, 3000);
+      return () => clearTimeout(timer);
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handler);
@@ -47,23 +63,27 @@ export function InstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    // Store dismissal in localStorage to avoid showing again for a while
     localStorage.setItem('installPromptDismissed', Date.now().toString());
   };
 
-  // Check if user dismissed recently
+  // Não mostrar se já está instalado ou foi dispensado recentemente
+  if (isInStandaloneMode) return null;
+
+  // Check if user dismissed recently (only for non-iOS)
   useEffect(() => {
-    const dismissed = localStorage.getItem('installPromptDismissed');
-    if (dismissed) {
-      const dismissedTime = parseInt(dismissed);
-      const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-      if (dismissedTime > oneDayAgo) {
-        setShowPrompt(false);
+    if (!isIOS) {
+      const dismissed = localStorage.getItem('installPromptDismissed');
+      if (dismissed) {
+        const dismissedTime = parseInt(dismissed);
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+        if (dismissedTime > oneDayAgo) {
+          setShowPrompt(false);
+        }
       }
     }
-  }, []);
+  }, [isIOS]);
 
-  if (!showPrompt || !deferredPrompt) return null;
+  if (!showPrompt || (!deferredPrompt && !isIOS)) return null;
 
   return (
     <div className="fixed bottom-20 left-4 right-4 z-50 animate-fade-in">
@@ -77,7 +97,7 @@ export function InstallPrompt() {
               <div>
                 <CardTitle className="text-lg">Instalar App</CardTitle>
                 <CardDescription className="text-sm">
-                  Acesse rapidamente sem navegador
+                  {isIOS ? 'Adicione à tela inicial' : 'Acesse rapidamente sem navegador'}
                 </CardDescription>
               </div>
             </div>
@@ -92,22 +112,40 @@ export function InstallPrompt() {
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleInstall}
-              className="flex-1 gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Instalar
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleDismiss}
-              className="px-4"
-            >
-              Agora não
-            </Button>
-          </div>
+          {isIOS ? (
+            <div className="space-y-3">
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Share className="w-4 h-4" />
+                  <span>1. Toque no botão compartilhar</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Download className="w-4 h-4" />
+                  <span>2. Selecione "Adicionar à Tela Inicial"</span>
+                </div>
+              </div>
+              <Button variant="outline" onClick={handleDismiss} className="w-full">
+                Entendi
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleInstall}
+                className="flex-1 gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Instalar
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleDismiss}
+                className="px-4"
+              >
+                Agora não
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
