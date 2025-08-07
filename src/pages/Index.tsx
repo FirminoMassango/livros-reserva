@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useBooks, Book } from "@/hooks/useBooks";
 import { useSales } from "@/hooks/useSales";
+import { useBookOfTheDay } from "@/hooks/useBookOfTheDay";
 import { Login } from "@/components/Login";
 import { EnhancedBookCard } from "@/components/EnhancedBookCard";
 import { BookDrawer } from "@/components/BookDrawer";
@@ -10,7 +11,6 @@ import { ProfilePage } from "@/components/ProfilePage";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { BookOfTheDay } from "@/components/BookOfTheDay";
-import { APP_CONFIG } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { BookOpen } from "lucide-react";
 
@@ -18,6 +18,7 @@ const Index = () => {
   const { user, profile, loading: authLoading, isAdmin } = useSupabaseAuth();
   const { books, loading: booksLoading, updateBookStock } = useBooks();
   const { salesData, createSale } = useSales(profile?.user_id, isAdmin);
+  const { bookOfTheDay } = useBookOfTheDay(books);
   const [activeTab, setActiveTab] = useState("sales");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -94,8 +95,6 @@ const Index = () => {
     return <Login />;
   }
 
-  // Encontrar o livro do dia
-  const bookOfTheDay = books.find(book => book.title.includes("Um pequeno homem de um grande Deus"));
 
   const renderContent = () => {
     switch (activeTab) {
