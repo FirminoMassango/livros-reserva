@@ -72,7 +72,7 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">
-              R$ {salesData.totalRevenue.toFixed(2)}
+              MT {salesData.totalRevenue.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
               +8% vs mês anterior
@@ -91,7 +91,7 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
           <div className="flex items-center justify-between">
             <span className="text-sm">Ticket Médio</span>
             <span className="font-semibold">
-              R$ {salesData.totalSold > 0 ? (salesData.totalRevenue / salesData.totalSold).toFixed(2) : '0.00'}
+              MT {salesData.totalSold > 0 ? (salesData.totalRevenue / salesData.totalSold).toFixed(2) : '0.00'}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -119,14 +119,15 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
             <CardDescription>Distribuição de vendas por categoria de livros</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={{
-                sales: { label: "Vendas", color: "hsl(var(--primary))" },
-              }}
-              className="h-[200px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={categoryData}>
+            <div className="overflow-x-auto">
+              <ChartContainer
+                config={{
+                  sales: { label: "Vendas", color: "hsl(var(--primary))" },
+                }}
+                className="h-[200px] min-w-[400px]"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={categoryData}>
                   <XAxis 
                     dataKey="category" 
                     fontSize={12}
@@ -144,9 +145,10 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
                     fill="hsl(var(--primary))"
                     radius={[4, 4, 0, 0]}
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -159,14 +161,15 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
             <CardDescription>Vendas realizadas por cada vendedor</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={{
-                sales: { label: "Vendas", color: "hsl(var(--secondary))" },
-              }}
-              className="h-[200px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={userSalesData} layout="horizontal">
+            <div className="overflow-x-auto">
+              <ChartContainer
+                config={{
+                  sales: { label: "Vendas", color: "hsl(var(--secondary))" },
+                }}
+                className="h-[200px] min-w-[400px]"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={userSalesData} layout="horizontal">
                   <XAxis type="number" fontSize={12} />
                   <YAxis 
                     dataKey="user" 
@@ -180,9 +183,10 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
                     fill="hsl(var(--secondary))"
                     radius={[0, 4, 4, 0]}
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -195,14 +199,15 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
             <CardDescription>Vendas dos últimos 7 dias</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={{
-                vendas: { label: "Vendas", color: "hsl(var(--accent))" },
-              }}
-              className="h-[200px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={recentSalesData}>
+            <div className="overflow-x-auto">
+              <ChartContainer
+                config={{
+                  vendas: { label: "Vendas", color: "hsl(var(--accent))" },
+                }}
+                className="h-[200px] min-w-[400px]"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={recentSalesData}>
                   <XAxis 
                     dataKey="day" 
                     fontSize={12}
@@ -222,9 +227,10 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
                     strokeWidth={3}
                     dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
                   />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       )}

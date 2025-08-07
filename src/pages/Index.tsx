@@ -9,6 +9,8 @@ import { EnhancedDashboard } from "@/components/EnhancedDashboard";
 import { ProfilePage } from "@/components/ProfilePage";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { BookOfTheDay } from "@/components/BookOfTheDay";
+import { APP_CONFIG } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { BookOpen } from "lucide-react";
 
@@ -56,7 +58,7 @@ const Index = () => {
 
         toast({
           title: "Venda realizada!",
-          description: `${quantity}x "${book.title}" vendido(s) por R$ ${(book.price * quantity).toFixed(2)}.`,
+          description: `${quantity}x "${book.title}" vendido(s) por MT ${(book.price * quantity).toFixed(2)}.`,
         });
 
         setIsDrawerOpen(false);
@@ -92,11 +94,22 @@ const Index = () => {
     return <Login />;
   }
 
+  // Encontrar o livro do dia
+  const bookOfTheDay = books.find(book => book.title.includes("Um pequeno homem de um grande Deus"));
+
   const renderContent = () => {
     switch (activeTab) {
       case 'sales':
         return (
           <>
+            {/* Livro do Dia */}
+            {!booksLoading && bookOfTheDay && (
+              <BookOfTheDay 
+                book={bookOfTheDay} 
+                onClick={() => handleBookClick(bookOfTheDay)} 
+              />
+            )}
+            
             {booksLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-20">
                 {Array.from({ length: 8 }).map((_, i) => (

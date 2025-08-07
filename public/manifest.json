@@ -1,20 +1,39 @@
 {
   "name": "Livraria Digital - Sistema de Vendas",
   "short_name": "Livraria",
-  "description": "Sistema PWA para venda presencial de livros",
+  "description": "Sistema PWA para venda presencial de livros evangélicos",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#3b82f6",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "48x48",
       "type": "image/x-icon",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "categories": ["business", "books", "retail"],
-  "lang": "pt-BR"
+  "categories": ["business", "books", "retail", "religion"],
+  "lang": "pt-BR",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {},
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

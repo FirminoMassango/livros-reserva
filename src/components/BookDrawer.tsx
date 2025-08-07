@@ -71,9 +71,9 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-success" />
-              <span className="text-2xl font-bold text-success">
-                R$ {book.price.toFixed(2)}
-              </span>
+               <span className="text-2xl font-bold text-success">
+                MT {book.price.toFixed(2)}
+               </span>
             </div>
             <Badge variant="secondary" className="text-sm">
               {book.category}
@@ -139,11 +139,11 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
           <div className="bg-muted/50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Subtotal</span>
-              <span className="font-semibold">R$ {totalPrice.toFixed(2)}</span>
+              <span className="font-semibold">MT {totalPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center text-lg">
               <span className="font-semibold">Total</span>
-              <span className="font-bold text-success">R$ {totalPrice.toFixed(2)}</span>
+              <span className="font-bold text-success">MT {totalPrice.toFixed(2)}</span>
             </div>
           </div>
         </div>

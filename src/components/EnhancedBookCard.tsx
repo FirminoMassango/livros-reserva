@@ -42,9 +42,9 @@ export function EnhancedBookCard({ book, onClick }: EnhancedBookCardProps) {
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
             <div className="flex items-center gap-1 text-white">
               <DollarSign className="w-4 h-4" />
-              <span className="text-lg font-bold">
-                R$ {book.price.toFixed(2)}
-              </span>
+               <span className="text-lg font-bold">
+                MT {book.price.toFixed(2)}
+               </span>
             </div>
           </div>
         </div>
