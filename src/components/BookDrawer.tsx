@@ -13,16 +13,17 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { Minus, Plus, Package, User, DollarSign } from 'lucide-react';
+import { Minus, Plus, Package, User, DollarSign, ShoppingCart } from 'lucide-react';
 
 interface BookDrawerProps {
   book: Book | null;
   isOpen: boolean;
   onClose: () => void;
   onSell: (bookId: string, quantity: number) => void;
+  onAddToCart?: (bookId: string, quantity: number) => void;
 }
 
-export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
+export function BookDrawer({ book, isOpen, onClose, onSell, onAddToCart }: BookDrawerProps) {
   const [quantity, setQuantity] = useState(1);
 
   if (!book) return null;
@@ -148,7 +149,19 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
           </div>
         </div>
 
-        <DrawerFooter className="flex-shrink-0 pt-4">
+        <DrawerFooter className="flex-shrink-0 pt-4 space-y-2">
+          {onAddToCart && (
+            <Button 
+              onClick={() => onAddToCart(book.id, quantity)}
+              size="lg"
+              variant="outline"
+              className="w-full h-12 text-base font-semibold"
+              disabled={book.stock === 0}
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              {book.stock === 0 ? 'Fora de Estoque' : 'Adicionar ao Carrinho'}
+            </Button>
+          )}
           <Button 
             onClick={handleSell}
             size="lg"

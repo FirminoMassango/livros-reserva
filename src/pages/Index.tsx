@@ -1,28 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useBooks, Book } from "@/hooks/useBooks";
 import { useSales } from "@/hooks/useSales";
 import { useBookOfTheDay } from "@/hooks/useBookOfTheDay";
+import { useCart } from "@/hooks/useCart";
+import { useReservations } from "@/hooks/useReservations";
 import { Login } from "@/components/Login";
 import { EnhancedBookCard } from "@/components/EnhancedBookCard";
 import { BookDrawer } from "@/components/BookDrawer";
+import { CartDrawer } from "@/components/CartDrawer";
+import { ReservationForm } from "@/components/ReservationForm";
+import { ReservationsPanel } from "@/components/ReservationsPanel";
 import { EnhancedDashboard } from "@/components/EnhancedDashboard";
 import { ProfilePage } from "@/components/ProfilePage";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { BookOfTheDay } from "@/components/BookOfTheDay";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ShoppingCart, LogOut } from "lucide-react";
 
 const Index = () => {
   const { user, profile, loading: authLoading, isAdmin } = useSupabaseAuth();
   const { books, loading: booksLoading, updateBookStock } = useBooks();
   const { salesData, createSale } = useSales(profile?.user_id, isAdmin);
   const { bookOfTheDay } = useBookOfTheDay(books);
+  const { 
+    cartItems, 
+    loading: cartLoading, 
+    addToCart, 
+    updateQuantity, 
+    removeFromCart, 
+    clearCart,
+    getCartTotal,
+    getCartItemCount 
+  } = useCart();
+  const { 
+    reservations, 
+    loading: reservationsLoading, 
+    fetchReservations,
+    createReservation,
+    updateReservationStatus 
+  } = useReservations();
+  
   const [activeTab, setActiveTab] = useState("sales");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [showReservationForm, setShowReservationForm] = useState(false);
   const { toast } = useToast();
+
+  // Buscar reservas quando o usuário for admin
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchReservations(true);
+    }
+  }, [user, isAdmin, fetchReservations]);
 
   const handleBookClick = (book: Book) => {
     if (book.stock === 0) {
@@ -80,7 +114,40 @@ const Index = () => {
     }
   };
 
-  if (authLoading) {
+  const handleAddToCart = async (bookId: string, quantity: number) => {
+    const success = await addToCart(bookId, quantity);
+    if (success) {
+      setIsDrawerOpen(false);
+      setSelectedBook(null);
+    }
+  };
+
+  const handleConfirmReservation = () => {
+    setIsCartDrawerOpen(false);
+    setShowReservationForm(true);
+  };
+
+  const handleCreateReservation = async (reservationData: any) => {
+    const reservationId = await createReservation(reservationData, cartItems);
+    if (reservationId) {
+      await clearCart();
+      setShowReservationForm(false);
+      toast({
+        title: "Reserva criada!",
+        description: "Sua reserva foi criada com sucesso. Você receberá confirmação em breve.",
+      });
+    }
+  };
+
+  const handleUpdateReservationStatus = async (reservationId: string, status: any, notes?: string) => {
+    await updateReservationStatus(reservationId, status, notes);
+  };
+
+  const handleSignOut = async () => {
+    // ... existing signout logic
+  };
+
+  if (authLoading || cartLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -95,12 +162,55 @@ const Index = () => {
     return <Login />;
   }
 
+  // Mostrar formulário de reserva se ativo
+  if (showReservationForm) {
+    return (
+      <ReservationForm
+        cartItems={cartItems}
+        total={getCartTotal()}
+        onSubmit={handleCreateReservation}
+        onBack={() => setShowReservationForm(false)}
+      />
+    );
+  }
 
   const renderContent = () => {
     switch (activeTab) {
       case 'sales':
         return (
           <>
+            {/* Header com carrinho */}
+            <div className="bg-background border-b border-border p-4 flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Vendas de Livros</h1>
+              <div className="flex items-center gap-3">
+                {/* Cart Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsCartDrawerOpen(true)}
+                  className="relative flex items-center gap-2"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Carrinho
+                  {getCartItemCount() > 0 && (
+                    <Badge className="absolute -top-2 -right-2 px-1.5 py-0.5 text-xs min-w-[20px] h-5">
+                      {getCartItemCount()}
+                    </Badge>
+                  )}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sair
+                </Button>
+              </div>
+            </div>
+
             {/* Livro do Dia */}
             {!booksLoading && bookOfTheDay && (
               <BookOfTheDay 
@@ -131,18 +241,28 @@ const Index = () => {
                 ))}
               </div>
             )}
-            <BookDrawer
-              book={selectedBook}
-              isOpen={isDrawerOpen}
-              onClose={() => setIsDrawerOpen(false)}
-              onSell={handleSellBook}
-            />
           </>
         );
       case 'dashboard':
-        return <EnhancedDashboard salesData={salesData} />;
+        return (
+          <div className="pb-20">
+            {isAdmin ? (
+              <ReservationsPanel
+                reservations={reservations}
+                onUpdateStatus={handleUpdateReservationStatus}
+                loading={reservationsLoading}
+              />
+            ) : (
+              <EnhancedDashboard salesData={salesData} />
+            )}
+          </div>
+        );
       case 'profile':
-        return <ProfilePage />;
+        return (
+          <div className="pb-20">
+            <ProfilePage />
+          </div>
+        );
       default:
         return null;
     }
@@ -162,7 +282,7 @@ const Index = () => {
               </h1>
               <p className="text-sm text-muted-foreground">
                 {activeTab === 'sales' && 'Catálogo de livros'}
-                {activeTab === 'dashboard' && 'Análise de vendas'}
+                {activeTab === 'dashboard' && (isAdmin ? 'Painel de Reservas' : 'Análise de vendas')}
                 {activeTab === 'profile' && `Olá, ${profile?.name}`}
               </p>
             </div>
@@ -177,6 +297,25 @@ const Index = () => {
       <BottomNavigation 
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
+      />
+
+      <BookDrawer
+        book={selectedBook}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSell={handleSellBook}
+        onAddToCart={handleAddToCart}
+      />
+
+      <CartDrawer
+        cartItems={cartItems}
+        isOpen={isCartDrawerOpen}
+        onClose={() => setIsCartDrawerOpen(false)}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeFromCart}
+        onConfirmReservation={handleConfirmReservation}
+        total={getCartTotal()}
+        itemCount={getCartItemCount()}
       />
 
       <InstallPrompt />
