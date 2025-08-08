@@ -31,7 +31,7 @@ export function BookCard({ book, onSell }: BookCardProps) {
               {book.author}
             </p>
             <p className="text-lg font-bold text-primary">
-              R$ {book.price.toFixed(2)}
+              MT {book.price.toFixed(2)}
             </p>
           </div>
         </div>

@@ -49,8 +49,8 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
 
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="text-center">
+      <DrawerContent className="max-h-[80vh] overflow-hidden flex flex-col">
+        <DrawerHeader className="text-center flex-shrink-0">
           <div className="mx-auto w-24 h-32 mb-4 rounded-lg overflow-hidden shadow-lg">
             <img 
               src={book.cover} 
@@ -66,7 +66,7 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="px-4 space-y-6">
+        <div className="flex-1 overflow-y-auto px-4 space-y-6">
           {/* Price and Category */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export function BookDrawer({ book, isOpen, onClose, onSell }: BookDrawerProps) {
           </div>
         </div>
 
-        <DrawerFooter className="pt-6">
+        <DrawerFooter className="flex-shrink-0 pt-4">
           <Button 
             onClick={handleSell}
             size="lg"
