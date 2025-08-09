@@ -66,8 +66,8 @@ export function Login() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
             <BookOpen className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Livraria Digital</h1>
-          <p className="text-muted-foreground mt-2">Sistema de vendas presenciais</p>
+          <h1 className="text-3xl font-bold text-foreground">Acesso Vendedor</h1>
+          <p className="text-muted-foreground mt-2">Faça login para gerenciar reservas</p>
         </div>
 
         <Tabs defaultValue="login" className="w-full">
@@ -120,7 +120,7 @@ export function Login() {
                 </form>
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    <strong>Teste:</strong> admin@admin.com / admin123
+                    <strong>Admin:</strong> admin@livraria.mz / admin123
                   </p>
                 </div>
               </CardContent>
