@@ -43,15 +43,17 @@ export interface CreateReservationData {
 
 export function useReservations() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const fetchReservations = async (isAdmin: boolean = false) => {
+    if (loading) return; // Prevent multiple calls
+    
+    setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      if (!user && !isAdmin) {
         setReservations([]);
-        setLoading(false);
         return;
       }
 
@@ -66,7 +68,7 @@ export function useReservations() {
         `);
 
       // Se não for admin, filtrar apenas reservas do usuário
-      if (!isAdmin) {
+      if (!isAdmin && user) {
         query = query.eq('user_id', user.id);
       }
 
@@ -92,35 +94,27 @@ export function useReservations() {
   };
 
   const createReservation = async (
-    reservationData: CreateReservationData,
+    reservationData: CreateReservationData & { payment_method?: string },
     cartItems: any[]
   ) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Erro",
-          description: "É necessário fazer login para criar uma reserva",
-          variant: "destructive",
-        });
-        return false;
-      }
-
+      // Para compradores, não precisamos de user autenticado
       const totalAmount = cartItems.reduce((total, item) => {
         return total + (item.book.price * item.quantity);
       }, 0);
 
-      // Criar a reserva
+      // Criar a reserva sem user_id (para compradores)
       const { data: reservation, error: reservationError } = await supabase
         .from('reservations')
         .insert({
-          user_id: user.id,
+          user_id: null, // Comprador não tem user_id
           customer_name: reservationData.customer_name,
           customer_phone: reservationData.customer_phone,
           customer_email: reservationData.customer_email,
           pickup_location: reservationData.pickup_location,
           total_amount: totalAmount,
-          notes: reservationData.notes
+          notes: reservationData.notes,
+          payment_method: reservationData.payment_method || 'Numerário'
         })
         .select()
         .single();
@@ -138,7 +132,7 @@ export function useReservations() {
       // Criar os itens da reserva
       const reservationItems = cartItems.map(item => ({
         reservation_id: reservation.id,
-        book_id: item.book_id,
+        book_id: item.book.id,
         quantity: item.quantity,
         unit_price: item.book.price,
         total_price: item.book.price * item.quantity
@@ -150,7 +144,6 @@ export function useReservations() {
 
       if (itemsError) {
         console.error('Error creating reservation items:', itemsError);
-        // Tentar limpar a reserva criada
         await supabase.from('reservations').delete().eq('id', reservation.id);
         toast({
           title: "Erro",
