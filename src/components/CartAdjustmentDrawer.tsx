@@ -5,21 +5,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Minus } from 'lucide-react';
 import { Book } from '@/hooks/useBooks';
+import { ReservationForm } from '@/components/ReservationForm';
 
 interface CartAdjustmentDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   selectedBook: Book | null;
   onAddToCart: (book: Book, quantity: number) => void;
+  onMakeReservation: (book: Book, quantity: number) => void;
 }
 
 export function CartAdjustmentDrawer({
   isOpen,
   onClose,
   selectedBook,
-  onAddToCart
+  onAddToCart,
+  onMakeReservation
 }: CartAdjustmentDrawerProps) {
   const [quantity, setQuantity] = useState(1);
+  const [showReservationForm, setShowReservationForm] = useState(false);
 
   const handleQuantityChange = (increment: boolean) => {
     if (increment) {
@@ -37,7 +41,57 @@ export function CartAdjustmentDrawer({
     }
   };
 
+  const handleMakeReservation = () => {
+    if (selectedBook) {
+      onMakeReservation(selectedBook, quantity);
+      setQuantity(1);
+      onClose();
+    }
+  };
+
+  const handleReservationFormSubmit = (formData: any) => {
+    setShowReservationForm(false);
+    onClose();
+  };
+
   if (!selectedBook) return null;
+
+  if (showReservationForm) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Fazer Reserva</DialogTitle>
+          </DialogHeader>
+          <ReservationForm
+            cartItems={[{
+              id: `temp-${selectedBook.id}`,
+              book_id: selectedBook.id,
+              user_id: '',
+              created_at: '',
+              updated_at: '',
+              quantity: quantity,
+              book: {
+                id: selectedBook.id,
+                title: selectedBook.title,
+                author: selectedBook.author,
+                price: selectedBook.price,
+                cover: selectedBook.cover,
+                category: selectedBook.category,
+                description: selectedBook.description,
+                stock: selectedBook.stock,
+                created_at: '',
+                updated_at: ''
+              }
+            }]}
+            total={selectedBook.price * quantity}
+            onSubmit={handleReservationFormSubmit}
+            onBack={() => setShowReservationForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -103,12 +157,15 @@ export function CartAdjustmentDrawer({
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button onClick={handleAddToCart} className="flex-1">
+            <Button onClick={handleAddToCart}>
               Adicionar ao Carrinho
+            </Button>
+            <Button onClick={() => setShowReservationForm(true)} variant="secondary">
+              Fazer Reserva
             </Button>
           </div>
         </div>

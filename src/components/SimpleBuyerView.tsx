@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useBooks } from '@/hooks/useBooks';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { ShoppingCart, BookOpen, Sparkles, Plus, Minus, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ReservationForm } from '@/components/ReservationForm';
 import { CartAdjustmentDrawer } from '@/components/CartAdjustmentDrawer';
+import { Login } from '@/components/Login';
 import { Book } from '@/hooks/useBooks';
 
 interface SimpleCartItem {
@@ -18,6 +20,7 @@ interface SimpleCartItem {
 
 export function SimpleBuyerView() {
   const { books, loading } = useBooks();
+  const { user } = useAuth();
   const [cartItems, setCartItems] = useState<SimpleCartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -93,6 +96,35 @@ export function SimpleBuyerView() {
   const handleSellerAdjustment = (book: Book) => {
     setSelectedBookForAdjustment(book);
     setShowCartAdjustment(true);
+  };
+
+  const handleSellerReservation = (book: Book, quantity: number) => {
+    const cartItem = {
+      id: `temp-${book.id}`,
+      book_id: book.id,
+      user_id: '',
+      created_at: '',
+      updated_at: '',
+      quantity: quantity,
+      book: {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        cover: book.cover,
+        category: book.category,
+        description: book.description,
+        stock: book.stock,
+        created_at: '',
+        updated_at: ''
+      }
+    };
+
+    // Simular reserva para vendedor
+    toast({
+      title: "Reserva criada!",
+      description: `Reserva de ${quantity}x ${book.title} criada pelo vendedor`,
+    });
   };
 
   if (showReservationForm) {
@@ -231,24 +263,13 @@ export function SimpleBuyerView() {
                     <p className="text-xs text-muted-foreground mb-2">{book.author}</p>
                     <div className="flex items-center justify-between">
                     <span className="font-bold text-primary">{book.price.toFixed(2)} MZN</span>
-                    <div className="flex gap-1">
                       <Button
-                        onClick={() => addToCart(book)}
+                        onClick={() => handleSellerAdjustment(book)}
                         disabled={book.stock === 0}
                         size="sm"
                       >
                         <Plus className="w-4 h-4" />
                       </Button>
-                      <Button
-                        onClick={() => handleSellerAdjustment(book)}
-                        disabled={book.stock === 0}
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        +Vnd
-                      </Button>
-                    </div>
                   </div>
                   </CardContent>
                 </Card>
@@ -349,17 +370,29 @@ export function SimpleBuyerView() {
         onClose={() => setShowCartAdjustment(false)}
         selectedBook={selectedBookForAdjustment}
         onAddToCart={addToCart}
+        onMakeReservation={handleSellerReservation}
       />
 
+      {/* Seller Login */}
+      {showSellerLogin && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-md">
+            <Login onClose={() => setShowSellerLogin(false)} />
+          </div>
+        </div>
+      )}
+
       {/* Seller Login Button */}
-      <Button
-        onClick={() => setShowSellerLogin(true)}
-        className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
-        size="icon"
-        title="Acesso Vendedor"
-      >
-        <UserCog className="w-6 h-6" />
-      </Button>
+      {!user && (
+        <Button
+          onClick={() => setShowSellerLogin(true)}
+          className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
+          size="icon"
+          title="Acesso Vendedor"
+        >
+          <UserCog className="w-6 h-6" />
+        </Button>
+      )}
     </div>
   );
 }

@@ -8,7 +8,11 @@ import { BookOpen, UserPlus, LogIn } from 'lucide-react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useToast } from '@/hooks/use-toast';
 
-export function Login() {
+interface LoginProps {
+  onClose?: () => void;
+}
+
+export function Login({ onClose }: LoginProps) {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +36,7 @@ export function Login() {
         title: "Login realizado com sucesso!",
         description: "Bem-vindo de volta!",
       });
+      onClose?.();
     }
     
     setIsLoading(false);
@@ -54,14 +59,15 @@ export function Login() {
         title: "Conta criada com sucesso!",
         description: "Você já está logado e pronto para vender!",
       });
+      onClose?.();
     }
     
     setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="p-4">
+      <div className="w-full max-w-md mx-auto">
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
             <BookOpen className="w-8 h-8 text-primary-foreground" />
@@ -178,6 +184,14 @@ export function Login() {
             </Card>
           </TabsContent>
         </Tabs>
+        
+        {onClose && (
+          <div className="mt-4 text-center">
+            <Button variant="ghost" onClick={onClose}>
+              Voltar para compras
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
