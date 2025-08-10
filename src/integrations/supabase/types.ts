@@ -171,11 +171,12 @@ export type Database = {
           customer_phone: string
           id: string
           notes: string | null
+          payment_method: string | null
           pickup_location: string | null
           status: string
           total_amount: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -184,11 +185,12 @@ export type Database = {
           customer_phone: string
           id?: string
           notes?: string | null
+          payment_method?: string | null
           pickup_location?: string | null
           status?: string
           total_amount: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -197,11 +199,12 @@ export type Database = {
           customer_phone?: string
           id?: string
           notes?: string | null
+          payment_method?: string | null
           pickup_location?: string | null
           status?: string
           total_amount?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

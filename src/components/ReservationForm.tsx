@@ -10,12 +10,12 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CartItem } from '@/hooks/useCart';
 import { CreateReservationData } from '@/hooks/useReservations';
-import { ArrowLeft, User, Phone, Mail, MapPin, FileText } from 'lucide-react';
+import { ArrowLeft, User, Phone, Mail, MapPin, FileText, CreditCard } from 'lucide-react';
 
 interface ReservationFormProps {
   cartItems: CartItem[];
   total: number;
-  onSubmit: (data: CreateReservationData) => void;
+  onSubmit: (data: CreateReservationData & { payment_method: string }) => void;
   onBack: () => void;
   loading?: boolean;
 }
@@ -27,6 +27,13 @@ const pickupLocations = [
   'Ponto de Entrega - Universidade Católica'
 ];
 
+const paymentMethods = [
+  { value: 'Numerário', label: 'Numerário (Dinheiro)' },
+  { value: 'M-Pesa', label: 'M-Pesa' },
+  { value: 'e-Mola', label: 'e-Mola' },
+  { value: 'POS', label: 'POS (Cartão)' }
+];
+
 export function ReservationForm({ 
   cartItems, 
   total, 
@@ -34,12 +41,13 @@ export function ReservationForm({
   onBack, 
   loading = false 
 }: ReservationFormProps) {
-  const [formData, setFormData] = useState<CreateReservationData>({
+  const [formData, setFormData] = useState<CreateReservationData & { payment_method: string }>({
     customer_name: '',
     customer_phone: '',
     customer_email: '',
     pickup_location: '',
-    notes: ''
+    notes: '',
+    payment_method: 'Numerário'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,7 +55,7 @@ export function ReservationForm({
     onSubmit(formData);
   };
 
-  const handleInputChange = (field: keyof CreateReservationData, value: string) => {
+  const handleInputChange = (field: keyof (CreateReservationData & { payment_method: string }), value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -133,6 +141,28 @@ export function ReservationForm({
                     {pickupLocations.map((location) => (
                       <SelectItem key={location} value={location}>
                         {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4" />
+                  Método de Pagamento *
+                </Label>
+                <Select 
+                  value={formData.payment_method} 
+                  onValueChange={(value) => handleInputChange('payment_method', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentMethods.map((method) => (
+                      <SelectItem key={method.value} value={method.value}>
+                        {method.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

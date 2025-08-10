@@ -20,7 +20,7 @@ export interface ReservationItem {
 
 export interface Reservation {
   id: string;
-  user_id: string;
+  user_id: string | null;
   customer_name: string;
   customer_phone: string;
   customer_email?: string;
@@ -28,6 +28,7 @@ export interface Reservation {
   total_amount: number;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   notes?: string;
+  payment_method?: string;
   created_at: string;
   updated_at: string;
   reservation_items: ReservationItem[];

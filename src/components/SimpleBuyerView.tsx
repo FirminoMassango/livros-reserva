@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useBooks } from '@/hooks/useBooks';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, BookOpen, Sparkles, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, BookOpen, Sparkles, Plus, Minus, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ReservationForm } from '@/components/ReservationForm';
+import { CartAdjustmentDrawer } from '@/components/CartAdjustmentDrawer';
 import { Book } from '@/hooks/useBooks';
 
 interface SimpleCartItem {
@@ -20,6 +21,9 @@ export function SimpleBuyerView() {
   const [cartItems, setCartItems] = useState<SimpleCartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showReservationForm, setShowReservationForm] = useState(false);
+  const [showSellerLogin, setShowSellerLogin] = useState(false);
+  const [showCartAdjustment, setShowCartAdjustment] = useState(false);
+  const [selectedBookForAdjustment, setSelectedBookForAdjustment] = useState<Book | null>(null);
   const { toast } = useToast();
 
   const addToCart = (book: Book, quantity: number = 1) => {
@@ -75,14 +79,20 @@ export function SimpleBuyerView() {
   const totalPrice = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handleReservationComplete = () => {
+  const handleReservationComplete = (formData: any) => {
+    // Simular criação de reserva
     clearCart();
     setShowReservationForm(false);
     setIsCartOpen(false);
     toast({
       title: "Reserva realizada!",
-      description: "Sua reserva foi enviada com sucesso!",
+      description: `Reserva criada com método de pagamento: ${formData.payment_method}`,
     });
+  };
+
+  const handleSellerAdjustment = (book: Book) => {
+    setSelectedBookForAdjustment(book);
+    setShowCartAdjustment(true);
   };
 
   if (showReservationForm) {
@@ -220,7 +230,8 @@ export function SimpleBuyerView() {
                     <h3 className="font-semibold text-sm mb-1 line-clamp-1">{book.title}</h3>
                     <p className="text-xs text-muted-foreground mb-2">{book.author}</p>
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-primary">{book.price.toFixed(2)} MZN</span>
+                    <span className="font-bold text-primary">{book.price.toFixed(2)} MZN</span>
+                    <div className="flex gap-1">
                       <Button
                         onClick={() => addToCart(book)}
                         disabled={book.stock === 0}
@@ -228,7 +239,17 @@ export function SimpleBuyerView() {
                       >
                         <Plus className="w-4 h-4" />
                       </Button>
+                      <Button
+                        onClick={() => handleSellerAdjustment(book)}
+                        disabled={book.stock === 0}
+                        size="sm"
+                        variant="outline"
+                        className="text-xs"
+                      >
+                        +Vnd
+                      </Button>
                     </div>
+                  </div>
                   </CardContent>
                 </Card>
               ))}
@@ -321,6 +342,24 @@ export function SimpleBuyerView() {
           </div>
         </div>
       )}
+
+      {/* Seller Cart Adjustment Drawer */}
+      <CartAdjustmentDrawer
+        isOpen={showCartAdjustment}
+        onClose={() => setShowCartAdjustment(false)}
+        selectedBook={selectedBookForAdjustment}
+        onAddToCart={addToCart}
+      />
+
+      {/* Seller Login Button */}
+      <Button
+        onClick={() => setShowSellerLogin(true)}
+        className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
+        size="icon"
+        title="Acesso Vendedor"
+      >
+        <UserCog className="w-6 h-6" />
+      </Button>
     </div>
   );
 }
