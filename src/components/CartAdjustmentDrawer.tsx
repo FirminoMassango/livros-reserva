@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, Minus } from 'lucide-react';
 import { Book } from '@/hooks/useBooks';
 import { ReservationForm } from '@/components/ReservationForm';
+import { formatarValor } from '@/lib/utils';
 
 interface CartAdjustmentDrawerProps {
   isOpen: boolean;
