@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useBooks } from '@/hooks/useBooks';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useReservations } from '@/hooks/useReservations'; // Adicione esta importação
 import { ShoppingCart, BookOpen, Sparkles, Plus, Minus, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,7 @@ interface SimpleCartItem {
 export function SimpleBuyerView() {
   const { books, loading } = useBooks();
   const { user } = useAuth();
+  const { createReservation } = useReservations(); // Adicione esta linha
   const [cartItems, setCartItems] = useState<SimpleCartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -82,17 +84,29 @@ export function SimpleBuyerView() {
   const totalPrice = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handleReservationComplete = (formData: any) => {
-    // Simular criação de reserva
-    clearCart();
-    setShowReservationForm(false);
-    setIsCartOpen(false);
-    toast({
-      title: "Reserva realizada!",
-      description: `Reserva criada com método de pagamento: ${formData.payment_method}`,
-    });
-  };
+  const handleReservationComplete = async (formData: any) => {
+    // Chamar a função createReservation do hook useReservations
+    const reservationId = await createReservation(
+      formData,
+      cartItems.map(item => ({
+        book: item.book,
+        quantity: item.quantity
+      }))
+    );
 
+    console.log("reservationId:",reservationId)
+
+    if (reservationId) {
+      clearCart();
+      setShowReservationForm(false);
+      setIsCartOpen(false);
+      toast({
+        title: "Reserva realizada!",
+        description: `Reserva criada com sucesso. ID: ${reservationId}`,
+      });
+    }
+  };
+  
   const handleSellerAdjustment = (book: Book) => {
     setSelectedBookForAdjustment(book);
     setShowCartAdjustment(true);
@@ -370,7 +384,17 @@ export function SimpleBuyerView() {
         onClose={() => setShowCartAdjustment(false)}
         selectedBook={selectedBookForAdjustment}
         onAddToCart={addToCart}
-        onMakeReservation={handleSellerReservation}
+        onReservationSubmit={async (formData, book, quantity) => {
+          // Chamar createReservation com os dados do formulário e do livro
+          await createReservation(
+            formData,
+            [{ book, quantity }]
+          );
+          toast({
+            title: "Reserva realizada!",
+            description: `${quantity}x ${book.title} reservados com sucesso.`
+          });
+        }}
       />
 
       {/* Seller Login */}

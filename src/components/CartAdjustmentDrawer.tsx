@@ -12,7 +12,7 @@ interface CartAdjustmentDrawerProps {
   onClose: () => void;
   selectedBook: Book | null;
   onAddToCart: (book: Book, quantity: number) => void;
-  onMakeReservation: (book: Book, quantity: number) => void;
+  onReservationSubmit: (formData: any, book: Book, quantity: number) => void;
 }
 
 export function CartAdjustmentDrawer({
@@ -20,7 +20,7 @@ export function CartAdjustmentDrawer({
   onClose,
   selectedBook,
   onAddToCart,
-  onMakeReservation
+  onReservationSubmit
 }: CartAdjustmentDrawerProps) {
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -41,15 +41,10 @@ export function CartAdjustmentDrawer({
     }
   };
 
-  const handleMakeReservation = () => {
-    if (selectedBook) {
-      onMakeReservation(selectedBook, quantity);
-      setQuantity(1);
-      onClose();
-    }
-  };
-
   const handleReservationFormSubmit = (formData: any) => {
+    if (selectedBook) {
+      onReservationSubmit(formData, selectedBook, quantity);
+    }
     setShowReservationForm(false);
     onClose();
   };

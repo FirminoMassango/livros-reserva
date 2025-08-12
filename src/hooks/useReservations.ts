@@ -98,6 +98,10 @@ export function useReservations() {
     reservationData: CreateReservationData & { payment_method?: string },
     cartItems: any[]
   ) => {
+
+    console.warn("reservationData",reservationData)
+    console.warn("cartItems",cartItems)
+    
     try {
       // Para compradores, não precisamos de user autenticado
       const totalAmount = cartItems.reduce((total, item) => {

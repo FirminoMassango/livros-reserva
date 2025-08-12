@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ReservationsPanel } from '@/components/ReservationsPanel';
 import { Dashboard } from '@/components/Dashboard';
 import { useReservations } from '@/hooks/useReservations';
@@ -17,12 +17,19 @@ import {
 } from 'lucide-react';
 
 export function SellerView() {
-  const { profile, signOut } = useSupabaseAuth();
-  const { reservations, loading: reservationsLoading, updateReservationStatus } = useReservations();
+  const { profile, signOut, isAdmin } = useSupabaseAuth();
+  const { reservations, loading: reservationsLoading, updateReservationStatus, fetchReservations } = useReservations();
   const { salesData, loading: salesLoading } = useSales(profile?.user_id, profile?.role === 'admin');
+
+  // Buscar todas as reservas se admin, senão apenas as do vendedor
+  useEffect(() => {
+    fetchReservations(isAdmin);
+  }, [isAdmin]);
 
   const pendingReservations = reservations.filter(r => r.status === 'pending');
   const completedReservations = reservations.filter(r => r.status === 'completed');
+
+  console.log(reservations)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5">
