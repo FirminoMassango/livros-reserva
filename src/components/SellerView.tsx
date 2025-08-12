@@ -15,16 +15,17 @@ import {
   Calendar,
   TrendingUp
 } from 'lucide-react';
+import { formatarValor } from '@/lib/utils';
 
 export function SellerView() {
   const { profile, signOut, isAdmin } = useSupabaseAuth();
   const { reservations, loading: reservationsLoading, updateReservationStatus, fetchReservations } = useReservations();
   const { salesData, loading: salesLoading } = useSales(profile?.user_id, profile?.role === 'admin');
 
-  // Buscar todas as reservas se admin, senão apenas as do vendedor
+  // Buscar todas as reservas para todos os usuários
   useEffect(() => {
-    fetchReservations(isAdmin);
-  }, [isAdmin]);
+    fetchReservations(true);
+  }, []);
 
   const pendingReservations = reservations.filter(r => r.status === 'pending');
   const completedReservations = reservations.filter(r => r.status === 'completed');
@@ -141,12 +142,12 @@ export function SellerView() {
               <div className="bg-white rounded-xl p-4 border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                    <span className="text-accent font-bold">MZN</span>
+                    <span className="text-accent font-bold">MT</span>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Valor Total</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {reservations.reduce((acc, r) => acc + r.total_amount, 0).toFixed(2)}
+                      {formatarValor(reservations.reduce((acc, r) => acc + r.total_amount, 0))}
                     </p>
                   </div>
                 </div>

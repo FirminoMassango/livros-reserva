@@ -2,6 +2,7 @@ import { Book } from "@/types/book";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, BookOpen } from "lucide-react";
+import { formatarValor } from "@/lib/utils";
 
 interface BookCardProps {
   book: Book;
@@ -31,7 +32,7 @@ export function BookCard({ book, onSell }: BookCardProps) {
               {book.author}
             </p>
             <p className="text-lg font-bold text-primary">
-              MT {book.price.toFixed(2)}
+              {formatarValor(book.price)} MT
             </p>
           </div>
         </div>

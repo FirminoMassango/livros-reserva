@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
+import { formatarValor } from '@/lib/utils';
 
 interface CartDrawerProps {
   cartItems: CartItem[];
@@ -35,6 +36,7 @@ export function CartDrawer({
   total,
   itemCount
 }: CartDrawerProps) {
+
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DrawerContent className="max-h-[85vh] overflow-hidden flex flex-col">
@@ -81,7 +83,7 @@ export function CartDrawer({
                             {item.book.author}
                           </p>
                           <p className="text-sm font-bold text-primary">
-                            {item.book.price.toFixed(2)} MZN
+                            {formatarValor(item.book.price)} MT
                           </p>
                         </div>
                       </div>
@@ -115,7 +117,7 @@ export function CartDrawer({
 
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-semibold">
-                            {(item.book.price * item.quantity).toFixed(2)} MZN
+                            {formatarValor(item.book.price * item.quantity)} MT
                           </span>
                           <Button
                             variant="outline"
@@ -135,7 +137,7 @@ export function CartDrawer({
               <div className="flex-shrink-0 bg-muted/20 p-4 space-y-3">
                 <div className="flex justify-between items-center text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">{total.toFixed(2)} MZN</span>
+                  <span className="text-primary">{formatarValor(total)} MT</span>
                 </div>
               </div>
             </>

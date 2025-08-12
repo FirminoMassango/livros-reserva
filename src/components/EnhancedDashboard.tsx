@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, 
 import { DollarSign, BookCheck, TrendingUp, Users, Calendar, Package } from "lucide-react";
 import { SalesData } from "@/hooks/useSales";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { formatarValor } from "@/lib/utils";
 
 interface EnhancedDashboardProps {
   salesData: SalesData;
@@ -72,7 +73,7 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">
-              MT {salesData.totalRevenue.toFixed(2)}
+              {formatarValor(salesData.totalRevenue)} MT
             </div>
             <p className="text-xs text-muted-foreground">
               +8% vs mês anterior
@@ -91,7 +92,7 @@ export function EnhancedDashboard({ salesData }: EnhancedDashboardProps) {
           <div className="flex items-center justify-between">
             <span className="text-sm">Ticket Médio</span>
             <span className="font-semibold">
-              MT {salesData.totalSold > 0 ? (salesData.totalRevenue / salesData.totalSold).toFixed(2) : '0.00'}
+              {salesData.totalSold > 0 ? formatarValor(salesData.totalRevenue / salesData.totalSold) : '0.00'} MT
             </span>
           </div>
           <div className="flex items-center justify-between">

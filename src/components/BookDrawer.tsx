@@ -14,6 +14,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { Minus, Plus, Package, User, DollarSign, ShoppingCart } from 'lucide-react';
+import { formatarValor } from '@/lib/utils';
 
 interface BookDrawerProps {
   book: Book | null;
@@ -73,7 +74,7 @@ export function BookDrawer({ book, isOpen, onClose, onSell, onAddToCart }: BookD
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-success" />
                <span className="text-2xl font-bold text-success">
-                MT {book.price.toFixed(2)}
+                {formatarValor(book.price)} MT
                </span>
             </div>
             <Badge variant="secondary" className="text-sm">
@@ -140,11 +141,11 @@ export function BookDrawer({ book, isOpen, onClose, onSell, onAddToCart }: BookD
           <div className="bg-muted/50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Subtotal</span>
-              <span className="font-semibold">MT {totalPrice.toFixed(2)}</span>
+              <span className="font-semibold">{formatarValor(totalPrice)} MT</span>
             </div>
             <div className="flex justify-between items-center text-lg">
               <span className="font-semibold">Total</span>
-              <span className="font-bold text-success">MT {totalPrice.toFixed(2)}</span>
+              <span className="font-bold text-success">{formatarValor(totalPrice)} MT</span>
             </div>
           </div>
         </div>

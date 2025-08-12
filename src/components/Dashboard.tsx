@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatarValor } from "@/lib/utils";
 import { DollarSign, BookCheck, TrendingUp } from "lucide-react";
 
 interface DashboardProps {
@@ -38,7 +39,7 @@ export function Dashboard({ totalSold, totalRevenue, totalBooks }: DashboardProp
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-success">
-            R$ {totalRevenue.toFixed(2)}
+           { formatarValor(totalRevenue) } MT
           </div>
           <p className="text-xs text-muted-foreground">
             vendas em dinheiro

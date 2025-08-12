@@ -108,7 +108,7 @@ export function CartAdjustmentDrawer({
               <h3 className="font-semibold text-sm">{selectedBook.title}</h3>
               <p className="text-xs text-muted-foreground">{selectedBook.author}</p>
               <p className="text-sm font-bold text-primary mt-1">
-                {selectedBook.price.toFixed(2)} MZN
+                {formatarValor(selectedBook.price)} MT
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export function CartAdjustmentDrawer({
             <div className="flex justify-between items-center">
               <span className="text-sm">Total:</span>
               <span className="font-bold text-lg">
-                {(selectedBook.price * quantity).toFixed(2)} MZN
+                {formatarValor(selectedBook.price * quantity)} MT
               </span>
             </div>
           </div>

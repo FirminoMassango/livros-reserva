@@ -11,6 +11,7 @@ import { ReservationForm } from '@/components/ReservationForm';
 import { CartAdjustmentDrawer } from '@/components/CartAdjustmentDrawer';
 import { Login } from '@/components/Login';
 import { Book } from '@/hooks/useBooks';
+import { formatarValor } from '@/lib/utils';
 
 interface SimpleCartItem {
   id: string;
@@ -276,7 +277,7 @@ export function SimpleBuyerView() {
                     <h3 className="font-semibold text-sm mb-1 line-clamp-1">{book.title}</h3>
                     <p className="text-xs text-muted-foreground mb-2">{book.author}</p>
                     <div className="flex items-center justify-between">
-                    <span className="font-bold text-primary">{book.price.toFixed(2)} MZN</span>
+                    <span className="font-bold text-primary">{formatarValor(book.price)} MT</span>
                       <Button
                         onClick={() => handleSellerAdjustment(book)}
                         disabled={book.stock === 0}
@@ -349,7 +350,7 @@ export function SimpleBuyerView() {
                             </Button>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-semibold">{item.totalPrice.toFixed(2)} MZN</p>
+                            <p className="text-sm font-semibold">{formatarValor(item.totalPrice)} MT</p>
                           </div>
                         </div>
                       </div>
@@ -363,7 +364,7 @@ export function SimpleBuyerView() {
               <div className="p-4 border-t">
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-semibold">Total:</span>
-                  <span className="text-lg font-bold text-primary">{totalPrice.toFixed(2)} MZN</span>
+                  <span className="text-lg font-bold text-primary">{formatarValor(totalPrice)} MT</span>
                 </div>
                 <Button
                   onClick={() => setShowReservationForm(true)}

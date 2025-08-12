@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CartItem } from '@/hooks/useCart';
 import { CreateReservationData } from '@/hooks/useReservations';
 import { ArrowLeft, User, Phone, Mail, FileText, CreditCard, ShoppingBag } from 'lucide-react';
+import { formatarValor } from '@/lib/utils';
 
 interface ReservationFormProps {
   cartItems: CartItem[];
@@ -194,7 +195,7 @@ export function ReservationForm({
                               Qtd: {item.quantity}
                             </Badge>
                             <span className="text-sm font-semibold">
-                              {(item.book.price * item.quantity).toFixed(2)} MZN
+                              {formatarValor(item.book.price * item.quantity)} MT
                             </span>
                           </div>
                         </div>
@@ -208,11 +209,11 @@ export function ReservationForm({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>{total.toFixed(2)} MZN</span>
+                    <span>{formatarValor(total)} MT</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span className="text-primary">{total.toFixed(2)} MZN</span>
+                    <span className="text-primary">{formatarValor(total)} MT</span>
                   </div>
                 </div>
 

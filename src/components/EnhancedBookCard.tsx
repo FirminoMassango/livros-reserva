@@ -2,6 +2,7 @@ import { Book } from "@/hooks/useBooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, DollarSign } from "lucide-react";
+import { formatarValor } from "@/lib/utils";
 
 interface EnhancedBookCardProps {
   book: Book;
@@ -9,6 +10,7 @@ interface EnhancedBookCardProps {
 }
 
 export function EnhancedBookCard({ book, onClick }: EnhancedBookCardProps) {
+
   return (
     <Card 
       className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
@@ -42,9 +44,9 @@ export function EnhancedBookCard({ book, onClick }: EnhancedBookCardProps) {
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
             <div className="flex items-center gap-1 text-white">
               <DollarSign className="w-4 h-4" />
-               <span className="text-lg font-bold">
-                MT {book.price.toFixed(2)}
-               </span>
+                <span className="text-lg font-bold">
+                  {formatarValor(book.price)} MT
+                </span>
             </div>
           </div>
         </div>

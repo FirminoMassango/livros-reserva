@@ -2,6 +2,7 @@ import { Book } from "@/hooks/useBooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Clock } from "lucide-react";
+import { formatarValor } from "@/lib/utils";
 
 interface BookOfTheDayProps {
   book: Book | null;
@@ -51,7 +52,7 @@ export function BookOfTheDay({ book, onClick }: BookOfTheDayProps) {
                 {book.category}
               </Badge>
               <span className="text-lg font-bold text-primary">
-                MT {book.price.toFixed(2)}
+                {formatarValor(book.price)} MT
               </span>
             </div>
             <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
