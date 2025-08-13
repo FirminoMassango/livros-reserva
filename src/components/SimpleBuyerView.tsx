@@ -230,7 +230,7 @@ export function SimpleBuyerView() {
         className="py-12 px-4 animate-fadeIn"
         aria-labelledby="hero-title"
       >
-        <div className="container mx-4 text-center">
+        <div className="container text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Sparkles
               className="w-8 h-8 text-accent animate-pulse"
@@ -268,7 +268,7 @@ export function SimpleBuyerView() {
 
       {/* Books List */}
       <main className="px-4 pb-8">
-        <div className="container mx-4">
+        <div className="container">
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
