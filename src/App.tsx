@@ -24,6 +24,9 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
+    <div className="text-center my-2">
+      <span className="text-sm text-slate-700">© {new Date().getFullYear()} CrossCode</span>
+    </div>
   </QueryClientProvider>
 );
 
