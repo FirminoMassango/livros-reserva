@@ -126,17 +126,22 @@ export function ReservationsPanel({
                               )}
                             </p>
                           </div>
-                          <span
-                            className={`text-xs font-bold ${
+                          <Badge
+                            className={`flex items-center gap-1 ${
                               reservation.status === "completed"
-                                ? "text-green-700"
-                                : "text-yellow-700"
+                                ? "bg-green-100 text-green-800 border-green-300"
+                                : "bg-yellow-100 text-yellow-800 border-yellow-300"
                             }`}
                           >
+                            {reservation.status === "completed" ? (
+                              <ShoppingBag className="w-3 h-3" />
+                            ) : (
+                              <AlertCircle className="w-3 h-3" />
+                            )}
                             {reservation.status === "completed"
                               ? "Concluída"
                               : "Pendente"}
-                          </span>
+                          </Badge>
                         </div>
 
                         <div className="space-y-1 text-xs text-muted-foreground">
@@ -201,6 +206,26 @@ export function ReservationsPanel({
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="pl-6 space-y-1 text-sm">
+                        <p className="flex items-center gap-2">
+                          <Phone className="w-3 h-3" />
+                          {selectedReservation.customer_phone}
+                        </p>
+                        {selectedReservation.customer_alternative_phone && (
+                          <p className="flex items-center gap-2">
+                            <Phone className="w-3 h-3" />
+                            {selectedReservation.customer_alternative_phone}
+                          </p>
+                        )}
+                        {selectedReservation.payment_method && (
+                          <p className="flex items-center gap-2">
+                            <ShoppingBag className="w-3 h-3" />
+                            {selectedReservation.payment_method}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                     <Tabs defaultValue="observacoes" className="space-y-4">
                       <TabsList className="grid grid-cols-2 mb-4">
                         <TabsTrigger value="observacoes">Observações</TabsTrigger>
