@@ -126,7 +126,17 @@ export function ReservationsPanel({
                               )}
                             </p>
                           </div>
-                          <span className="text-xs font-bold text-green-700">Pago</span>
+                          <span
+                            className={`text-xs font-bold ${
+                              reservation.status === "completed"
+                                ? "text-green-700"
+                                : "text-yellow-700"
+                            }`}
+                          >
+                            {reservation.status === "completed"
+                              ? "Concluída"
+                              : "Pendente"}
+                          </span>
                         </div>
 
                         <div className="space-y-1 text-xs text-muted-foreground">
