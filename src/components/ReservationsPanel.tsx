@@ -15,11 +15,15 @@ import {
   AlertCircle,
   CreditCard,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, addDays, isAfter, isBefore, isEqual } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { formatarValor } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { ReservationCard } from "./ReservationCard";
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
 
 interface ReservationsPanelProps {
   reservations: Reservation[];
@@ -36,10 +40,15 @@ export function ReservationsPanel({
   onUpdateStatus,
   loading,
 }: ReservationsPanelProps) {
+  const { profile, isAdmin } = useSupabaseAuth();
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState("");
+  const today = format(new Date(), "yyyy-MM-dd");
+  const fiveDaysAgo = format(addDays(new Date(), -5), "yyyy-MM-dd");
+  const [startDate, setStartDate] = useState<string>(fiveDaysAgo);
+  const [endDate, setEndDate] = useState<string>(today);
 
   const handleStatusUpdate = () => {
     if (selectedReservation) {
@@ -54,6 +63,62 @@ export function ReservationsPanel({
       setNotes(selectedReservation.notes || "");
     }
   }, [selectedReservation]);
+
+  // Filtra reservas pelo range de datas
+  const filteredReservations = reservations.filter((reservation) => {
+    if (!startDate && !endDate) return true;
+    const created = new Date(reservation.created_at);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? addDays(new Date(endDate), 1) : null; // inclui o dia final
+    if (start && end) {
+      return (isAfter(created, start) || isEqual(created, start)) && (isBefore(created, end));
+    } else if (start) {
+      return isAfter(created, start) || isEqual(created, start);
+    } else if (end) {
+      return isBefore(created, end);
+    }
+    return true;
+  });
+
+  // Filtra reservas pagas/concluídas (agora qualquer usuário vê todas)
+  const completedReservations = filteredReservations.filter(r => r.status === 'completed');
+  // Pendentes sempre mostra todas
+  const pendingReservations = filteredReservations.filter(r => r.status === 'pending');
+
+  // Estatísticas para gráficos
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#845EC2'];
+  const salesByBook = Object.values(
+    completedReservations.reduce((acc, r) => {
+      r.reservation_items.forEach(item => {
+        if (!acc[item.book.title]) {
+          acc[item.book.title] = { title: item.book.title, totalSold: 0 };
+        }
+        acc[item.book.title].totalSold += item.quantity;
+      });
+      return acc;
+    }, {} as Record<string, { title: string; totalSold: number }>)
+  );
+  const salesByPayment = Object.values(
+    completedReservations.reduce((acc, r) => {
+      if (r.payment_method) {
+        if (!acc[r.payment_method]) {
+          acc[r.payment_method] = { method: r.payment_method, value: 0 };
+        }
+        acc[r.payment_method].value += 1;
+      }
+      return acc;
+    }, {} as Record<string, { method: string; value: number }>)
+  );
+  const salesOverTime = completedReservations.reduce((acc, r) => {
+    const date = format(new Date(r.created_at), 'dd/MM/yyyy');
+    const found = acc.find(d => d.date === date);
+    if (found) {
+      found.total += r.total_amount;
+    } else {
+      acc.push({ date, total: r.total_amount });
+    }
+    return acc;
+  }, [] as { date: string; total: number }[]);
 
   if (loading) {
     return (
@@ -75,8 +140,35 @@ export function ReservationsPanel({
           {reservations.length === 1 ? "reserva" : "reservas"}
         </Badge>
       </div>
+      {/* Filtro por range de datas */}
+      <div className="flex gap-4 items-center mb-2">
+        <div>
+          <Label htmlFor="start-date">Data inicial</Label>
+          <input
+            id="start-date"
+            type="date"
+            className="border rounded px-2 py-1"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            max={endDate}
+          />
+          <span className="text-xs ml-2 text-muted-foreground">{format(new Date(startDate), "dd/MM/yyyy", { locale: ptBR })}</span>
+        </div>
+        <div>
+          <Label htmlFor="end-date">Data final</Label>
+          <input
+            id="end-date"
+            type="date"
+            className="border rounded px-2 py-1"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            min={startDate}
+          />
+          <span className="text-xs ml-2 text-muted-foreground">{format(new Date(endDate), "dd/MM/yyyy", { locale: ptBR })}</span>
+        </div>
+      </div>
 
-      {reservations.length === 0 ? (
+      {filteredReservations.length === 0 ? (
         <Card>
           <CardContent className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -91,97 +183,53 @@ export function ReservationsPanel({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Lista de Reservas */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Reservas Recentes</h3>
-            <ScrollArea className="h-[600px]">
-              <div className="space-y-4 pr-4">
-                {reservations.map((reservation) => {
-                  return (
-                    <Card
-                      key={reservation.id}
-                      className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                        selectedReservation?.id === reservation.id
-                          ? "ring-2 ring-primary"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedReservation(reservation);
-                        setIsOpen(true);
-                      }}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-semibold text-sm">
-                              {reservation.customer_name}
-                            </h4>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                              <Calendar className="w-3 h-3" />
-                              {format(
-                                new Date(reservation.created_at),
-                                "dd/MM/yyyy HH:mm",
-                                { locale: ptBR }
-                              )}
-                            </p>
-                          </div>
-                          <Badge
-                            className={`flex items-center gap-1 ${
-                              reservation.status === "completed"
-                                ? "bg-green-100 text-green-800 border-green-300"
-                                : "bg-yellow-100 text-yellow-800 border-yellow-300"
-                            }`}
-                          >
-                            {reservation.status === "completed" ? (
-                              <ShoppingBag className="w-3 h-3" />
-                            ) : (
-                              <AlertCircle className="w-3 h-3" />
-                            )}
-                            {reservation.status === "completed"
-                              ? "Concluída"
-                              : "Pendente"}
-                          </Badge>
-                        </div>
-
-                        <div className="space-y-1 text-xs text-muted-foreground">
-                          <p className="flex items-center gap-1">
-                            <Phone className="w-3 h-3" />
-                            {reservation.customer_phone}
-                          </p>
-                          {reservation.customer_alternative_phone && (
-                            <p className="flex items-center gap-1">
-                              <Phone className="w-3 h-3" />
-                              {reservation.customer_alternative_phone}
-                            </p>
-                          )}
-                          {reservation.pickup_location && (
-                            <p className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              {reservation.pickup_location}
-                            </p>
-                          )}
-                        </div>
-
-                        <Separator className="my-3" />
-
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">
-                            {reservation.reservation_items.length}{" "}
-                            {reservation.reservation_items.length === 1
-                              ? "livro"
-                              : "livros"}
-                          </span>
-                          <span className="font-bold text-sm">
-                            {formatarValor(reservation.total_amount)} MT
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </ScrollArea>
+            <Tabs defaultValue="pending" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="pending" className="flex items-center gap-2">
+                  Pendente(s)
+                </TabsTrigger>
+                <TabsTrigger value="completed" className="flex items-center gap-2">
+                  Pago(s)
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="pending" className="space-y-4">
+                <ScrollArea className="h-[600px]">
+                  <div className="space-y-4 pr-4">
+                    {pendingReservations.map((reservation) => (
+                      <ReservationCard
+                        key={reservation.id}
+                        reservation={reservation}
+                        selected={selectedReservation?.id === reservation.id}
+                        onClick={() => {
+                          setSelectedReservation(reservation);
+                          setIsOpen(true);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+              <TabsContent value="completed" className="space-y-4">
+                <ScrollArea className="h-[600px]">
+                  <div className="space-y-4 pr-4">
+                    {completedReservations.map((reservation) => (
+                      <ReservationCard
+                        key={reservation.id}
+                        reservation={reservation}
+                        selected={selectedReservation?.id === reservation.id}
+                        onClick={() => {
+                          setSelectedReservation(reservation);
+                          setIsOpen(true);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
           </div>
           {/* Detalhes da Reserva Selecionada */}
           <Dialog
