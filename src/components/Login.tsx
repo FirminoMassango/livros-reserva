@@ -124,11 +124,6 @@ export function Login({ onClose }: LoginProps) {
                     {isLoading ? "Entrando..." : "Entrar"}
                   </Button>
                 </form>
-                <div className="mt-4 p-3 bg-muted rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Admin:</strong> admin@livraria.mz / admin123
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>

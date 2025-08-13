@@ -3,7 +3,7 @@ import { useBooks } from '@/hooks/useBooks';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useReservations } from '@/hooks/useReservations'; // Adicione esta importação
-import { ShoppingCart, BookOpen, Sparkles, Plus, Minus, UserCog } from 'lucide-react';
+import { ShoppingCart, BookOpen, Sparkles, Plus, Minus, UserCog, CreditCard, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -183,18 +183,12 @@ export function SimpleBuyerView() {
                 <BookOpen className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Livraria Digital</h1>
+                <h1 className="text-xl font-bold text-foreground">Lorem Ipsum</h1>
                 <p className="text-sm text-muted-foreground">Moçambique</p>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Livros disponíveis</p>
-                <p className="text-lg font-bold text-primary">{books.length}</p>
-              </div>
-              
-              {totalItems > 0 && (
                 <Button
                   onClick={() => setIsCartOpen(true)}
                   className="relative"
@@ -206,42 +200,36 @@ export function SimpleBuyerView() {
                     {totalItems}
                   </Badge>
                 </Button>
-              )}
             </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h2 className="text-3xl font-bold text-foreground">
-              Reserve seus livros favoritos
-            </h2>
-            <Sparkles className="w-6 h-6 text-accent" />
-          </div>
-          <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Encontre, reserve e retire seus livros na nossa livraria. 
-            Processo simples e rápido, sem necessidade de cadastro!
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-success rounded-full"></div>
-              Sem cadastro necessário
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              Pagamento na retirada
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-accent rounded-full"></div>
-              Reserva garantida
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="py-12 px-4 animate-fadeIn" aria-labelledby="hero-title">
+  <div className="container mx-auto text-center">
+    <div className="flex items-center justify-center gap-3 mb-6">
+      <Sparkles className="w-8 h-8 text-accent animate-pulse" aria-hidden="true" />
+      <h2 id="hero-title" className="text-4xl md:text-5xl font-bold text-foreground">
+        Reserve seus livros em minutos!
+      </h2>
+      <Sparkles className="w-8 h-8 text-accent animate-pulse" aria-hidden="true" />
+    </div>
+    <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
+      Encontre, reserve e levante. Simples e rápido!
+    </p>
+    <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2 hover:text-foreground transition-colors">
+        <CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
+        <span>Pagamento na retirada</span>
+      </div>
+      <div className="flex items-center gap-2 hover:text-foreground transition-colors">
+        <CheckCircle className="w-5 h-5 text-accent" aria-hidden="true" />
+        <span>Reserva garantida</span>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Books List */}
       <main className="px-4 pb-8">

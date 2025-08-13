@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, CalendarPlus } from 'lucide-react';
 import { Book } from '@/hooks/useBooks';
 import { ReservationForm } from '@/components/ReservationForm';
 import { formatarValor } from '@/lib/utils';
@@ -154,14 +154,16 @@ export function CartAdjustmentDrawer({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Button variant="outline" onClick={onClose}>
-              Cancelar
+            <Button onClick={() => setShowReservationForm(true)}>
+              <CalendarPlus className="w-4 h-4 mr-2" />
+              Reservar Agora
             </Button>
-            <Button onClick={handleAddToCart}>
+            <Button onClick={handleAddToCart} variant="secondary">
+              <ShoppingCart className="w-4 h-4 mr-2" />
               Adicionar ao Carrinho
             </Button>
-            <Button onClick={() => setShowReservationForm(true)} variant="secondary">
-              Fazer Reserva
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
             </Button>
           </div>
         </div>

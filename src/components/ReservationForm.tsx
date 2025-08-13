@@ -39,7 +39,7 @@ export function ReservationForm({
   const [formData, setFormData] = useState<CreateReservationData & { payment_method: string }>({
     customer_name: '',
     customer_phone: '',
-    customer_email: '',
+    customer_alternative_phone: '',
     payment_method: '',
     notes: '',
   });
@@ -106,21 +106,22 @@ export function ReservationForm({
                     value={formData.customer_phone}
                     onChange={(e) => handleInputChange('customer_phone', e.target.value)}
                     placeholder="+258 XX XXX XXXX"
+                    maxLength={9}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    E-mail (opcional)
+                  <Label htmlFor="customer_alternative_phone" className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Telefone Alternativo (opcional)
                   </Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={formData.customer_email}
-                    onChange={(e) => handleInputChange('customer_email', e.target.value)}
-                    placeholder="seu@email.com"
+                    id="customer_alternative_phone"
+                    value={formData.customer_alternative_phone}
+                    onChange={(e) => handleInputChange('customer_alternative_phone', e.target.value)}
+                    placeholder="+258 XX XXX XXXX"
+                    maxLength={9}
                   />
                 </div>
 

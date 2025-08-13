@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, X, Smartphone, Share } from 'lucide-react';
+import React from 'react';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -70,7 +71,7 @@ export function InstallPrompt() {
   if (isInStandaloneMode) return null;
 
   // Check if user dismissed recently (only for non-iOS)
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isIOS) {
       const dismissed = localStorage.getItem('installPromptDismissed');
       if (dismissed) {

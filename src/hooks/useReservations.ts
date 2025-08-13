@@ -23,7 +23,7 @@ export interface Reservation {
   user_id: string | null;
   customer_name: string;
   customer_phone: string;
-  customer_email?: string;
+  customer_alternative_phone?: string;
   pickup_location?: string;
   total_amount: number;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
@@ -37,7 +37,7 @@ export interface Reservation {
 export interface CreateReservationData {
   customer_name: string;
   customer_phone: string;
-  customer_email?: string;
+  customer_alternative_phone?: string;
   pickup_location?: string;
   notes?: string;
 }
@@ -115,7 +115,7 @@ export function useReservations() {
           user_id: null, // Comprador não tem user_id
           customer_name: reservationData.customer_name,
           customer_phone: reservationData.customer_phone,
-          customer_email: reservationData.customer_email,
+          customer_alternative_phone: reservationData.customer_alternative_phone,
           pickup_location: reservationData.pickup_location,
           total_amount: totalAmount,
           notes: reservationData.notes,

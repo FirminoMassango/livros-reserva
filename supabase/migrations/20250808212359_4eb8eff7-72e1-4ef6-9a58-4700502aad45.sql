@@ -15,7 +15,7 @@ CREATE TABLE public.reservations (
   user_id uuid NOT NULL,
   customer_name text NOT NULL,
   customer_phone text NOT NULL,
-  customer_email text,
+  customer_alternative_phone text,
   pickup_location text,
   total_amount numeric NOT NULL,
   status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')),
