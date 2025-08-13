@@ -210,7 +210,7 @@ export function SimpleBuyerView() {
   <div className="container mx-auto text-center">
     <div className="flex items-center justify-center gap-3 mb-6">
       <Sparkles className="w-8 h-8 text-accent animate-pulse" aria-hidden="true" />
-      <h2 id="hero-title" className="text-4xl md:text-5xl font-bold text-foreground">
+      <h2 id="hero-title" className="text-3xl md:text-5xl font-bold text-foreground">
         Reserve seus livros em minutos!
       </h2>
       <Sparkles className="w-8 h-8 text-accent animate-pulse" aria-hidden="true" />
@@ -224,7 +224,7 @@ export function SimpleBuyerView() {
         <span>Pagamento na retirada</span>
       </div>
       <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-        <CheckCircle className="w-5 h-5 text-accent" aria-hidden="true" />
+        <CheckCircle className="w-5 h-5 text-green-600" aria-hidden="true" />
         <span>Reserva garantida</span>
       </div>
     </div>
