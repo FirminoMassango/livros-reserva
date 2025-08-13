@@ -235,7 +235,7 @@ export function SimpleBuyerView() {
       <main className="px-4 pb-8">
         <div className="container mx-auto">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="animate-pulse">
                   <div className="bg-muted rounded-lg aspect-[3/4] mb-4"></div>
@@ -246,10 +246,10 @@ export function SimpleBuyerView() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {books.map((book) => (
                 <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-[3/4] relative overflow-hidden">
+                  <div className="aspect-[2/3] sm:aspect-[3/4] relative overflow-hidden">
                     <img
                       src={book.cover}
                       alt={book.title}
