@@ -10,10 +10,10 @@ import { Reservation } from "@/hooks/useReservations";
 import {
   Calendar,
   Phone,
-  Mail,
   MapPin,
   ShoppingBag,
   AlertCircle,
+  CreditCard,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -151,7 +151,7 @@ export function ReservationsPanel({
                           </p>
                           {reservation.customer_alternative_phone && (
                             <p className="flex items-center gap-1">
-                              <Mail className="w-3 h-3" />
+                              <Phone className="w-3 h-3" />
                               {reservation.customer_alternative_phone}
                             </p>
                           )}
@@ -220,7 +220,7 @@ export function ReservationsPanel({
                         )}
                         {selectedReservation.payment_method && (
                           <p className="flex items-center gap-2">
-                            <ShoppingBag className="w-3 h-3" />
+                            <CreditCard className="w-3 h-3" />
                             {selectedReservation.payment_method}
                           </p>
                         )}
