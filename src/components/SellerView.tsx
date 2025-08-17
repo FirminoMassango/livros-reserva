@@ -37,8 +37,6 @@ export function SellerView() {
   const pendingReservations = reservations.filter(r => r.status === 'pending');
   const completedReservations = filteredReservations.filter(r => r.status === 'completed');
 
-  console.log(reservations)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5">
       {/* Header */}
