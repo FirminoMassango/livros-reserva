@@ -171,11 +171,18 @@ export function useReservations() {
 
   const updateReservationStatus = async (
     reservationId: string,
-    status: Reservation['status'],
+    userId: string | undefined,
+    status: string,
     notes?: string
   ) => {
     try {
-      const updateData: any = { status };
+      const updateData: { status: string; user_id?: string; notes?: string } = { status };
+      console.log("reservationId", reservationId)
+      console.log("user_id", userId)
+      console.log("status", status)
+      console.log("notes", notes)
+      
+      if (userId) updateData.user_id = userId;
       if (notes) updateData.notes = notes;
 
       const { error } = await supabase

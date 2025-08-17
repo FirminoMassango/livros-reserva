@@ -8,9 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Reservation } from "@/hooks/useReservations";
 import {
-  Calendar,
   Phone,
-  MapPin,
   ShoppingBag,
   AlertCircle,
   CreditCard,
@@ -20,7 +18,6 @@ import { ptBR } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { formatarValor } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { ReservationCard } from "./ReservationCard";
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -29,7 +26,8 @@ interface ReservationsPanelProps {
   reservations: Reservation[];
   onUpdateStatus: (
     reservationId: string,
-    status: Reservation["status"],
+    userId: string,
+    status: string,
     notes?: string
   ) => void;
   loading: boolean;
@@ -50,13 +48,7 @@ export function ReservationsPanel({
   const [startDate, setStartDate] = useState<string>(fiveDaysAgo);
   const [endDate, setEndDate] = useState<string>(today);
 
-  const handleStatusUpdate = () => {
-    if (selectedReservation) {
-      onUpdateStatus(selectedReservation.id, "completed", notes);
-      setSelectedReservation(null);
-      setNotes("");
-    }
-  };
+
 
   useEffect(() => {
     if (selectedReservation) {
@@ -81,7 +73,7 @@ export function ReservationsPanel({
   });
 
   // Filtra reservas pagas/concluídas (agora qualquer usuário vê todas)
-  const completedReservations = filteredReservations.filter(r => r.status === 'completed');
+  const completedReservations = filteredReservations.filter(r => r.status === 'completed' && r.user_id === profile?.user_id);
   // Pendentes sempre mostra todas
   const pendingReservations = filteredReservations.filter(r => r.status === 'pending');
 
@@ -143,7 +135,7 @@ export function ReservationsPanel({
       {/* Filtro por range de datas */}
       <div className="flex gap-4 items-center mb-2">
         <div>
-          <Label htmlFor="start-date">Data inicial</Label>
+          <Label htmlFor="start-date" className="mr-2">Data inicial</Label>
           <input
             id="start-date"
             type="date"
@@ -152,10 +144,9 @@ export function ReservationsPanel({
             onChange={e => setStartDate(e.target.value)}
             max={endDate}
           />
-          <span className="text-xs ml-2 text-muted-foreground">{format(new Date(startDate), "dd/MM/yyyy", { locale: ptBR })}</span>
         </div>
         <div>
-          <Label htmlFor="end-date">Data final</Label>
+          <Label htmlFor="end-date" className="mr-2">Data final</Label>
           <input
             id="end-date"
             type="date"
@@ -164,7 +155,6 @@ export function ReservationsPanel({
             onChange={e => setEndDate(e.target.value)}
             min={startDate}
           />
-          <span className="text-xs ml-2 text-muted-foreground">{format(new Date(endDate), "dd/MM/yyyy", { locale: ptBR })}</span>
         </div>
       </div>
 
@@ -339,7 +329,12 @@ export function ReservationsPanel({
                     <Button
                       onClick={() => {
                         if (selectedReservation) {
-                          onUpdateStatus(selectedReservation.id, "completed", notes);
+                          onUpdateStatus(
+                            selectedReservation.id,
+                            profile.user_id,
+                            "completed",
+                            notes
+                          );
                           setSelectedReservation(null);
                           setNotes("");
                           setIsOpen(false);
@@ -348,7 +343,7 @@ export function ReservationsPanel({
                       className="w-full"
                       disabled={notes === (selectedReservation.notes || "")}
                     >
-                      Confirmar Reserva
+                      {notes}Confirmar Reserva
                     </Button>
                   </CardContent>
                 </Card>

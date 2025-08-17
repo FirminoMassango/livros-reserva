@@ -28,8 +28,14 @@ export function SellerView() {
     fetchReservations(true);
   }, []);
 
+  const isAdminProfile = profile?.role === 'admin';
+
+  const filteredReservations = isAdminProfile
+    ? reservations
+    : reservations.filter(r => r.user_id === profile?.user_id);
+
   const pendingReservations = reservations.filter(r => r.status === 'pending');
-  const completedReservations = reservations.filter(r => r.status === 'completed');
+  const completedReservations = filteredReservations.filter(r => r.status === 'completed');
 
   console.log(reservations)
 
@@ -134,7 +140,7 @@ export function SellerView() {
                   <div>
                     <p className="text-sm text-muted-foreground">Total</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {reservations.length}
+                      {filteredReservations.length}
                     </p>
                   </div>
                 </div>
@@ -148,7 +154,7 @@ export function SellerView() {
                   <div>
                     <p className="text-sm text-muted-foreground">Valor Total</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {formatarValor(reservations.reduce((acc, r) => acc + r.total_amount, 0))}
+                      {formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))}
                     </p>
                   </div>
                 </div>
@@ -157,7 +163,9 @@ export function SellerView() {
 
             <ReservationsPanel
               reservations={reservations}
-              onUpdateStatus={updateReservationStatus}
+              onUpdateStatus={(reservationId, currentUser, status, notes) =>
+                updateReservationStatus(reservationId, currentUser, status, notes)
+              }
               loading={reservationsLoading}
             />
           </TabsContent>

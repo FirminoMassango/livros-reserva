@@ -23,8 +23,8 @@ export function Login({ onClose }: LoginProps) {
     e.preventDefault();
     setIsLoading(true);
     
-    const { error } = await signIn(loginData.email, loginData.password);
-    
+    const { user, error } = await signIn(loginData.email, loginData.password);
+
     if (error) {
       toast({
         title: "Erro no login",
@@ -38,7 +38,7 @@ export function Login({ onClose }: LoginProps) {
       });
       onClose?.();
     }
-    
+
     setIsLoading(false);
   };
 
