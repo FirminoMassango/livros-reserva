@@ -128,7 +128,7 @@ export function ReservationsPanel({
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Painel de Reservas</h2>
         <Badge variant="secondary" className="text-sm">
-          {reservations.length}{" "}
+          {pendingReservations.length}{" "}
           {reservations.length === 1 ? "reserva" : "reservas"}
         </Badge>
       </div>
