@@ -343,7 +343,7 @@ export function ReservationsPanel({
                       className="w-full"
                       disabled={notes === (selectedReservation.notes || "")}
                     >
-                      {notes}Confirmar Reserva
+                      Confirmar Reserva
                     </Button>
                   </CardContent>
                 </Card>
