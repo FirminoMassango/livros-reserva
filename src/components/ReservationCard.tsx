@@ -26,7 +26,10 @@ export function ReservationCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <h4 className="font-semibold text-sm">{reservation.customer_name}</h4>
+            <h4 className="font-semibold text-sm">
+              <span className="text-green-700">#RES-{reservation.reservation_number} </span>{" • "}
+              <span>{reservation.customer_name}</span> 
+            </h4>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <Calendar className="w-3 h-3" />
               {format(new Date(reservation.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}

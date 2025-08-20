@@ -31,6 +31,7 @@ export interface Reservation {
   payment_method?: string;
   created_at: string;
   updated_at: string;
+  reservation_number: number;
   reservation_items: ReservationItem[];
 }
 
@@ -160,9 +161,9 @@ export function useReservations() {
 
       toast({
         title: "Sucesso",
-        description: "Reserva criada com sucesso",
+        description: `Reserva criada com sucesso. Referência: #RES-${reservation.reservation_number}`,
       });
-      return reservation.id;
+      return reservation;
     } catch (error) {
       console.error('Error in createReservation:', error);
       return false;

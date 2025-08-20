@@ -176,7 +176,8 @@ export type Database = {
           status: string
           total_amount: number
           updated_at: string
-          user_id: string | null
+          user_id: string | null,
+          reservation_number : number | null
         }
         Insert: {
           created_at?: string

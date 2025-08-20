@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useBooks } from "@/hooks/useBooks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useReservations } from "@/hooks/useReservations"; // Adicione esta importação
+import { useReservations } from "@/hooks/useReservations";
 import {
   ShoppingCart,
   BookOpen,
@@ -13,6 +13,7 @@ import {
   CreditCard,
   CheckCircle,
   Trash2,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { CartAdjustmentDrawer } from "@/components/CartAdjustmentDrawer";
 import { Login } from "@/components/Login";
 import { Book } from "@/hooks/useBooks";
 import { formatarValor } from "@/lib/utils";
+import jsPDF from "jspdf";
 
 interface SimpleCartItem {
   id: string;
@@ -30,18 +32,65 @@ interface SimpleCartItem {
   totalPrice: number;
 }
 
+interface ReservationReference {
+  reservation_number: number;
+  date: string;
+  items: { title: string; quantity: number; price: number }[];
+  total: number;
+}
+
 export function SimpleBuyerView() {
   const { books, loading } = useBooks();
   const { user } = useAuth();
-  const { createReservation } = useReservations(); // Adicione esta linha
+  const { createReservation } = useReservations();
   const [cartItems, setCartItems] = useState<SimpleCartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [showSellerLogin, setShowSellerLogin] = useState(false);
   const [showCartAdjustment, setShowCartAdjustment] = useState(false);
-  const [selectedBookForAdjustment, setSelectedBookForAdjustment] =
-    useState<Book | null>(null);
+  const [selectedBookForAdjustment, setSelectedBookForAdjustment] = useState<Book | null>(null);
   const { toast } = useToast();
+  const [references, setReferences] = useState<ReservationReference[]>([]);
+  const [showReferencesModal, setShowReferencesModal] = useState(false);
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
+  const [pendingReservation, setPendingReservation] = useState<ReservationReference | null>(null);
+  const downloadButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("reservation_references");
+    if (stored) {
+      setReferences(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showDownloadPrompt && downloadButtonRef.current) {
+      downloadButtonRef.current.focus();
+    }
+  }, [showDownloadPrompt]);
+
+  const saveReference = (ref: ReservationReference) => {
+    const updated = [...references, ref];
+    setReferences(updated);
+    localStorage.setItem("reservation_references", JSON.stringify(updated));
+  };
+
+  const generatePDF = (ref: ReservationReference) => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Comprovativo de Reserva", 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Referência: #RES-${ref.reservation_number}`, 20, 35);
+    doc.text(`Data: ${ref.date}`, 20, 45);
+    doc.text("Itens:", 20, 55);
+    let y = 65;
+    ref.items.forEach((item) => {
+      doc.text(`- ${item.title} x${item.quantity} (${formatarValor(item.price)} MT)`, 25, y);
+      y += 10;
+    });
+    doc.text(`Total: ${formatarValor(ref.total)} MT`, 20, y + 10);
+    doc.save(`comprovativo_RES-${ref.reservation_number}.pdf`);
+  };
 
   const addToCart = (book: Book, quantity: number = 1) => {
     const existingItem = cartItems.find((item) => item.book.id === book.id);
@@ -105,8 +154,7 @@ export function SimpleBuyerView() {
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleReservationComplete = async (formData: any) => {
-    // Chamar a função createReservation do hook useReservations
-    const reservationId = await createReservation(
+    const reservation = await createReservation(
       formData,
       cartItems.map((item) => ({
         book: item.book,
@@ -114,15 +162,26 @@ export function SimpleBuyerView() {
       }))
     );
 
-    console.log("reservationId:", reservationId);
-
-    if (reservationId) {
+    if (reservation && reservation.reservation_number) {
+      const ref: ReservationReference = {
+        reservation_number: reservation.reservation_number,
+        date: new Date().toLocaleString(),
+        items: cartItems.map((item) => ({
+          title: item.book.title,
+          quantity: item.quantity,
+          price: item.totalPrice,
+        })),
+        total: totalPrice,
+      };
+      setPendingReservation(ref);
+      saveReference(ref);
+      setShowDownloadPrompt(true); // Show popup immediately
       clearCart();
       setShowReservationForm(false);
       setIsCartOpen(false);
       toast({
         title: "Reserva realizada!",
-        description: `Reserva criada com sucesso. ID: ${reservationId}`,
+        description: `Reserva criada com sucesso. Referência: #RES-${reservation.reservation_number}`,
       });
     }
   };
@@ -154,7 +213,6 @@ export function SimpleBuyerView() {
       },
     };
 
-    // Simular reserva para vendedor
     toast({
       title: "Reserva criada!",
       description: `Reserva de ${quantity}x ${book.title} criada pelo vendedor`,
@@ -163,37 +221,70 @@ export function SimpleBuyerView() {
 
   if (showReservationForm) {
     return (
-      <ReservationForm
-        cartItems={cartItems.map((item) => ({
-          id: item.id,
-          book_id: item.book.id,
-          user_id: "",
-          created_at: "",
-          updated_at: "",
-          quantity: item.quantity,
-          book: {
-            id: item.book.id,
-            title: item.book.title,
-            author: item.book.author,
-            price: item.book.price,
-            cover: item.book.cover,
-            category: item.book.category,
-            description: item.book.description,
-            stock: item.book.stock,
+      <>
+        <ReservationForm
+          cartItems={cartItems.map((item) => ({
+            id: item.id,
+            book_id: item.book.id,
+            user_id: "",
             created_at: "",
             updated_at: "",
-          },
-        }))}
-        total={totalPrice}
-        onSubmit={handleReservationComplete}
-        onBack={() => setShowReservationForm(false)}
-      />
+            quantity: item.quantity,
+            book: {
+              id: item.book.id,
+              title: item.book.title,
+              author: item.book.author,
+              price: item.book.price,
+              cover: item.book.cover,
+              category: item.book.category,
+              description: item.book.description,
+              stock: item.book.stock,
+              created_at: "",
+              updated_at: "",
+            },
+          }))}
+          total={totalPrice}
+          onSubmit={handleReservationComplete}
+          onBack={() => setShowReservationForm(false)}
+        />
+
+        {showDownloadPrompt && pendingReservation && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-6 shadow-lg max-w-sm w-full text-center">
+              <h2 className="text-lg font-bold mb-2">Reserva realizada!</h2>
+              <p className="mb-4">Deseja baixar o comprovativo da reserva?</p>
+              <div className="flex gap-4 justify-center">
+                <Button
+                  ref={downloadButtonRef}
+                  onClick={() => {
+                    generatePDF(pendingReservation);
+                    setShowDownloadPrompt(false);
+                    setPendingReservation(null);
+                  }}
+                  size="lg"
+                >
+                  Baixar comprovativo
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowDownloadPrompt(false);
+                    setPendingReservation(null);
+                  }}
+                  variant="outline"
+                  size="lg"
+                >
+                  Não agora
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5">
-      {/* Header */}
       <header className="bg-white/90 backdrop-blur-sm border-b sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -226,7 +317,6 @@ export function SimpleBuyerView() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section
         className="py-12 px-4 animate-fadeIn"
         aria-labelledby="hero-title"
@@ -267,7 +357,6 @@ export function SimpleBuyerView() {
         </div>
       </section>
 
-      {/* Books List */}
       <main className="px-4 pb-8">
         <div className="container">
           {loading ? (
@@ -327,7 +416,6 @@ export function SimpleBuyerView() {
         </div>
       </main>
 
-      {/* Cart Overlay */}
       {isCartOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex">
           <div className="ml-auto bg-white w-full max-w-md h-full overflow-hidden flex flex-col">
@@ -400,13 +488,13 @@ export function SimpleBuyerView() {
                               {formatarValor(item.totalPrice)} MT
                             </p>
                             <Button
-                                onClick={() => removeFromCart(item.id)}
-                                size="sm"
-                                variant="destructive"
-                                className="w-6 h-6 p-0 ml-4"
-                                aria-label={`Remover ${item.book.title} do carrinho`}
-                              >
-                                <Trash2 className="w-3 h-3" />
+                              onClick={() => removeFromCart(item.id)}
+                              size="sm"
+                              variant="destructive"
+                              className="w-6 h-6 p-0 ml-4"
+                              aria-label={`Remover ${item.book.title} do carrinho`}
+                            >
+                              <Trash2 className="w-3 h-3" />
                             </Button>
                           </div>
                         </div>
@@ -438,14 +526,12 @@ export function SimpleBuyerView() {
         </div>
       )}
 
-      {/* Seller Cart Adjustment Drawer */}
       <CartAdjustmentDrawer
         isOpen={showCartAdjustment}
         onClose={() => setShowCartAdjustment(false)}
         selectedBook={selectedBookForAdjustment}
         onAddToCart={addToCart}
         onReservationSubmit={async (formData, book, quantity) => {
-          // Chamar createReservation com os dados do formulário e do livro
           await createReservation(formData, [{ book, quantity }]);
           toast({
             title: "Reserva realizada!",
@@ -454,7 +540,6 @@ export function SimpleBuyerView() {
         }}
       />
 
-      {/* Seller Login */}
       {showSellerLogin && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg w-full max-w-md">
@@ -463,7 +548,18 @@ export function SimpleBuyerView() {
         </div>
       )}
 
-      {/* Seller Login Button */}
+      {references.length > 0 && (
+        <Button
+          onClick={() => setShowReferencesModal(true)}
+          variant="outline"
+          size="icon"
+          title="Ver comprovativos"
+          className="fixed bottom-20 right-4 rounded-full w-14 h-14 shadow-lg z-50"
+        >
+          <FileText className="w-5 h-5" />
+        </Button>
+      )}
+
       {!user && (
         <Button
           onClick={() => setShowSellerLogin(true)}
@@ -473,6 +569,33 @@ export function SimpleBuyerView() {
         >
           <UserCog className="w-6 h-6" />
         </Button>
+      )}
+
+      {showReferencesModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-4">Comprovativos gerados</h2>
+            {references.length === 0 ? (
+              <p className="text-muted-foreground">Nenhum comprovativo gerado.</p>
+            ) : (
+              <ul className="mb-4">
+                {references.map((ref, idx) => (
+                  <li key={idx} className="mb-2 flex items-center justify-between">
+                    <span className="font-mono text-sm">#RES-{ref.reservation_number}</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => generatePDF(ref)}
+                    >
+                      Baixar PDF
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Button onClick={() => setShowReferencesModal(false)} size="sm" className="w-full mt-2">Fechar</Button>
+          </div>
+        </div>
       )}
     </div>
   );
