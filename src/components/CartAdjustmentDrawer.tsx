@@ -14,6 +14,7 @@ interface CartAdjustmentDrawerProps {
   selectedBook: Book | null;
   onAddToCart: (book: Book, quantity: number) => void;
   onReservationSubmit: (formData: any, book: Book, quantity: number) => void;
+  showAddToCartButton?: boolean;
 }
 
 export function CartAdjustmentDrawer({
@@ -21,7 +22,8 @@ export function CartAdjustmentDrawer({
   onClose,
   selectedBook,
   onAddToCart,
-  onReservationSubmit
+  onReservationSubmit,
+  showAddToCartButton,
 }: CartAdjustmentDrawerProps) {
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -158,10 +160,12 @@ export function CartAdjustmentDrawer({
               <CalendarPlus className="w-4 h-4 mr-2" />
               Reservar Agora
             </Button>
-            <Button onClick={handleAddToCart} variant="secondary">
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Adicionar ao Carrinho
-            </Button>
+            {showAddToCartButton && (
+              <Button onClick={handleAddToCart} variant="secondary">
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Adicionar ao Carrinho
+              </Button>
+            )}
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>

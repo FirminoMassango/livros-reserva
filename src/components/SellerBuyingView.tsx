@@ -6,12 +6,9 @@ import { useReservations } from "@/hooks/useReservations";
 import {
   ShoppingCart,
   BookOpen,
-  Sparkles,
   Plus,
   Minus,
   UserCog,
-  CreditCard,
-  CheckCircle,
   Trash2,
   FileText,
 } from "lucide-react";
@@ -39,7 +36,7 @@ interface ReservationReference {
   total: number;
 }
 
-export function SimpleBuyerView() {
+export function SellerBuyingView() {
   const { books, loading } = useBooks();
   const { user } = useAuth();
   const { createReservation } = useReservations();
@@ -334,64 +331,11 @@ export function SimpleBuyerView() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={() => setIsCartOpen(true)}
-                className="relative"
-                size="lg"
-              >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                Carrinho
-                <Badge className="absolute -top-2 -right-2 bg-accent text-accent-foreground">
-                  {totalItems}
-                </Badge>
-              </Button>
-            </div>
           </div>
         </div>
       </header>
 
-      <section
-        className="py-12 px-4 animate-fadeIn"
-        aria-labelledby="hero-title"
-      >
-        <div className="container text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Sparkles
-              className="w-8 h-8 text-accent animate-pulse"
-              aria-hidden="true"
-            />
-            <h2
-              id="hero-title"
-              className="text-3xl md:text-5xl font-bold text-foreground"
-            >
-              Reserve seus livros em minutos!
-            </h2>
-            <Sparkles
-              className="w-8 h-8 text-accent animate-pulse"
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-            Encontre, reserve e levante. Simples e rápido!
-          </p>
-          <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-              <CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
-              <span>Pagamento na retirada</span>
-            </div>
-            <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-              <CheckCircle
-                className="w-5 h-5 text-green-600"
-                aria-hidden="true"
-              />
-              <span>Reserva garantida</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <main className="px-4 pb-8">
+      <main className="mt-8 px-4 pb-8">
         <div className="container">
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -564,7 +508,7 @@ export function SimpleBuyerView() {
         isOpen={showCartAdjustment}
         onClose={() => setShowCartAdjustment(false)}
         selectedBook={selectedBookForAdjustment}
-        showAddToCartButton={true}
+        showAddToCartButton={false}
         onAddToCart={addToCart}
         onReservationSubmit={async (formData, book, quantity) => {
           await createReservation(formData, [{ book, quantity }]);
@@ -592,17 +536,6 @@ export function SimpleBuyerView() {
           className="fixed bottom-20 right-4 rounded-full w-14 h-14 shadow-lg z-50"
         >
           <FileText className="w-5 h-5" />
-        </Button>
-      )}
-
-      {!user && (
-        <Button
-          onClick={() => setShowSellerLogin(true)}
-          className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
-          size="icon"
-          title="Acesso Vendedor"
-        >
-          <UserCog className="w-6 h-6" />
         </Button>
       )}
 

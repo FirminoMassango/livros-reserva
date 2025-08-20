@@ -14,9 +14,11 @@ import {
   User,
   Calendar,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  ShoppingCart
 } from 'lucide-react';
 import { formatarValor } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 export function SellerView() {
   const { profile, signOut, isAdmin } = useSupabaseAuth();
@@ -176,6 +178,16 @@ export function SellerView() {
             />
           </TabsContent>
         </Tabs>
+        <Link to="/buy">
+          <Button
+            className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
+            size="icon"
+            title="Acesso Vendedor"
+          >
+            <ShoppingCart className="w-6 h-6" />
+          </Button>
+        </Link>
+        
       </main>
     </div>
   );
