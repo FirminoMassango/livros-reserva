@@ -12,6 +12,7 @@ import {
   UserCog,
   CreditCard,
   CheckCircle,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -394,10 +395,19 @@ export function SimpleBuyerView() {
                               <Plus className="w-3 h-3" />
                             </Button>
                           </div>
-                          <div className="text-right">
+                          <div className="flex items-center gap-2">
                             <p className="text-sm font-semibold">
                               {formatarValor(item.totalPrice)} MT
                             </p>
+                            <Button
+                                onClick={() => removeFromCart(item.id)}
+                                size="sm"
+                                variant="destructive"
+                                className="w-6 h-6 p-0 ml-4"
+                                aria-label={`Remover ${item.book.title} do carrinho`}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                            </Button>
                           </div>
                         </div>
                       </div>
