@@ -341,7 +341,6 @@ export function ReservationsPanel({
                         }
                       }}
                       className="w-full"
-                      disabled={notes === (selectedReservation.notes || "")}
                     >
                       Confirmar Reserva
                     </Button>
