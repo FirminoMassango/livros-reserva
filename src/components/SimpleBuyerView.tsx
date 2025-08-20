@@ -76,19 +76,53 @@ export function SimpleBuyerView() {
   };
 
   const generatePDF = (ref: ReservationReference) => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Comprovativo de Reserva", 20, 20);
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const maxWidth = pageWidth - 2 * margin;
+
+    const entityName = "Lorem Ipsum Livraria - Moçambique";
+
+    // Header
+    doc.setFillColor(240, 240, 240);
+    doc.rect(0, 0, pageWidth, 30, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(0, 51, 102);
+    doc.text("Comprovativo de Reserva", margin, 20);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`${entityName}`, pageWidth - margin - 60, 20);
+
+    // Reservation Details
     doc.setFontSize(12);
-    doc.text(`Referência: #RES-${ref.reservation_number}`, 20, 35);
-    doc.text(`Data: ${ref.date}`, 20, 45);
-    doc.text("Itens:", 20, 55);
-    let y = 65;
+    doc.setTextColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(margin, 35, pageWidth - margin, 35);
+    doc.text(`Referência: #RES-${ref.reservation_number}`, margin, 45);
+    doc.text(`Data: ${ref.date}`, margin, 55);
+    doc.setFont("helvetica", "bold");
+    doc.text("Itens Reservados:", margin, 65);
+    doc.setFont("helvetica", "normal");
+    let y = 75;
     ref.items.forEach((item) => {
-      doc.text(`- ${item.title} x${item.quantity} (${formatarValor(item.price)} MT)`, 25, y);
-      y += 10;
+      const itemText = `- ${item.title} x${item.quantity} (${formatarValor(item.price)} MT)`;
+      doc.text(itemText, margin + 5, y, { maxWidth: maxWidth - 5 });
+      y += doc.getTextDimensions(itemText, { maxWidth: maxWidth - 5 }).h + 3;
     });
-    doc.text(`Total: ${formatarValor(ref.total)} MT`, 20, y + 10);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Total: ${formatarValor(ref.total)} MT`, margin, y + 10);
+
+    // Footer
+    doc.setLineWidth(0.5);
+    doc.line(margin, pageHeight - 25, pageWidth - margin, pageHeight - 25);
+    doc.setFontSize(8);
+    doc.setTextColor(100);
+    doc.text(`${entityName} | Desenvolvido por CrossCode`, margin, pageHeight - 15);
+    doc.text(`Página ${doc.getCurrentPageInfo().pageNumber}`, pageWidth - margin - 20, pageHeight - 15);
+
     doc.save(`comprovativo_RES-${ref.reservation_number}.pdf`);
   };
 
