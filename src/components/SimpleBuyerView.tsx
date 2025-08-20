@@ -392,7 +392,7 @@ export function SimpleBuyerView() {
       </section>
 
       <main className="px-4 pb-8">
-        <div className="container">
+        <>
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -447,7 +447,7 @@ export function SimpleBuyerView() {
               ))}
             </div>
           )}
-        </div>
+        </>
       </main>
 
       {isCartOpen && (

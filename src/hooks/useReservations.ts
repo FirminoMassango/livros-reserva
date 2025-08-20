@@ -40,6 +40,7 @@ export interface CreateReservationData {
   customer_phone: string;
   customer_alternative_phone?: string;
   pickup_location?: string;
+  status?: string;
   notes?: string;
 }
 
@@ -100,9 +101,6 @@ export function useReservations() {
     cartItems: any[]
   ) => {
 
-    console.warn("reservationData",reservationData)
-    console.warn("cartItems",cartItems)
-    
     try {
       // Para compradores, não precisamos de user autenticado
       const totalAmount = cartItems.reduce((total, item) => {
@@ -120,7 +118,8 @@ export function useReservations() {
           pickup_location: reservationData.pickup_location,
           total_amount: totalAmount,
           notes: reservationData.notes,
-          payment_method: reservationData.payment_method || 'Numerário'
+          payment_method: reservationData.payment_method || 'Numerário',
+          status: reservationData.status || 'pending'
         })
         .select()
         .single();

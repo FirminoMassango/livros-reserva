@@ -11,6 +11,7 @@ import {
   UserCog,
   Trash2,
   FileText,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ import { Login } from "@/components/Login";
 import { Book } from "@/hooks/useBooks";
 import { formatarValor } from "@/lib/utils";
 import jsPDF from "jspdf";
+import { Link, useParams } from "react-router-dom";
 
 interface SimpleCartItem {
   id: string;
@@ -52,6 +54,8 @@ export function SellerBuyingView() {
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
   const [pendingReservation, setPendingReservation] = useState<ReservationReference | null>(null);
   const downloadButtonRef = useRef<HTMLButtonElement>(null);
+
+  const { id } = useParams();
 
   useEffect(() => {
     const stored = localStorage.getItem("reservation_references");
@@ -186,7 +190,7 @@ export function SellerBuyingView() {
 
   const handleReservationComplete = async (formData: any) => {
     const reservation = await createReservation(
-      formData,
+      { ...formData, status: 'completed', user_id: id },
       cartItems.map((item) => ({
         book: item.book,
         quantity: item.quantity,
@@ -336,7 +340,14 @@ export function SellerBuyingView() {
       </header>
 
       <main className="mt-8 px-4 pb-8">
-        <div className="container">
+        <Link to="/">
+          <Button variant="outline" className="mb-4">
+            <ArrowLeft/>
+            Voltar
+          </Button>
+        </Link>
+        
+        <>
           {loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -391,7 +402,7 @@ export function SellerBuyingView() {
               ))}
             </div>
           )}
-        </div>
+        </>
       </main>
 
       {isCartOpen && (
@@ -511,7 +522,7 @@ export function SellerBuyingView() {
         showAddToCartButton={false}
         onAddToCart={addToCart}
         onReservationSubmit={async (formData, book, quantity) => {
-          await createReservation(formData, [{ book, quantity }]);
+          await createReservation({ ...formData, status: 'completed', user_id: id }, [{ book, quantity }]);
           toast({
             title: "Reserva realizada!",
             description: `${quantity}x ${book.title} reservados com sucesso.`,

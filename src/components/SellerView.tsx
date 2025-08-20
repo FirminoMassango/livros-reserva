@@ -84,26 +84,8 @@ export function SellerView() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="reservations" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="reservations" className="flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4" />
-              Reservas
-              {pendingReservations.length > 0 && (
-                <Badge className="ml-1 bg-accent text-accent-foreground">
-                  {pendingReservations.length}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Estatísticas
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="reservations" className="space-y-6">
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
               <div className="bg-white rounded-xl p-4 border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -124,23 +106,9 @@ export function SellerView() {
                     <TrendingUp className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Concluídas</p>
+                    <p className="text-sm text-muted-foreground">Livros Vendidos</p>
                     <p className="text-2xl font-bold text-foreground">
                       {completedReservations.length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-xl p-4 border">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <ShoppingBag className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {filteredReservations.length}
                     </p>
                   </div>
                 </div>
@@ -168,17 +136,7 @@ export function SellerView() {
               }
               loading={reservationsLoading}
             />
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
-            <Dashboard
-              totalSold={salesData.totalSold}
-              totalRevenue={salesData.totalRevenue}
-              totalBooks={salesData.totalSold} // Simplified for now
-            />
-          </TabsContent>
-        </Tabs>
-        <Link to="/buy">
+        <Link to={`/buy/${profile?.user_id}`}>
           <Button
             className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"
             size="icon"
@@ -187,7 +145,6 @@ export function SellerView() {
             <ShoppingCart className="w-6 h-6" />
           </Button>
         </Link>
-        
       </main>
     </div>
   );
