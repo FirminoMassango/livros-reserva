@@ -111,7 +111,7 @@ export function useReservations() {
       const { data: reservation, error: reservationError } = await supabase
         .from('reservations')
         .insert({
-          user_id: null, // Comprador não tem user_id
+          user_id: reservationData.user_id|| null, // Comprador não tem user_id
           customer_name: reservationData.customer_name,
           customer_phone: reservationData.customer_phone,
           customer_alternative_phone: reservationData.customer_alternative_phone,
