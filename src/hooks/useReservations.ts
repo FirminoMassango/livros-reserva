@@ -108,6 +108,8 @@ export function useReservations() {
         return total + (item.book.price * item.quantity);
       }, 0);
 
+      console.log("reservationData.user_id",reservationData.user_id)
+
       // Criar a reserva sem user_id (para compradores)
       const { data: reservation, error: reservationError } = await supabase
         .from('reservations')
