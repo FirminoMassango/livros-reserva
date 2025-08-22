@@ -54,7 +54,7 @@ export function SellerView() {
                   {profile?.role === 'admin' ? 'Painel Administrativo' : 'Painel do Vendedor'}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Olá, {profile?.name}
+                  {`Olá, ${profile?.name}`}
                 </p>
               </div>
             </div>

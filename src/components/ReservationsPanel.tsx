@@ -47,6 +47,7 @@ export function ReservationsPanel({
   const fiveDaysAgo = format(addDays(new Date(), -5), "yyyy-MM-dd");
   const [startDate, setStartDate] = useState<string>(fiveDaysAgo);
   const [endDate, setEndDate] = useState<string>(today);
+  const [searchContent, setSearchContent] = useState<string>("");
 
 
 
@@ -72,10 +73,13 @@ export function ReservationsPanel({
     return true;
   });
 
+
+
   // Filtra reservas pagas/concluídas (agora qualquer usuário vê todas)
-  const completedReservations = filteredReservations.filter(r => r.status === 'completed' && r.user_id === profile?.user_id);
+  const completedReservations = filteredReservations.filter(r => r.status === 'completed' && r.user_id === profile?.user_id && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))));
   // Pendentes sempre mostra todas
-  const pendingReservations = filteredReservations.filter(r => r.status === 'pending');
+  const pendingReservations = filteredReservations.filter(r => r.status === 'pending' && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))));
+  // const pendingReservations = filteredReservations.filter(r => r.status === 'pending' || r.reservation_number === Number(searchContent));
 
   // Estatísticas para gráficos
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#845EC2'];
@@ -132,6 +136,15 @@ export function ReservationsPanel({
           {reservations.length === 1 ? "reserva" : "reservas"}
         </Badge>
       </div>
+      {/* Campo de pesquisa*/}
+      <>
+        <input
+          id="pesquisa"
+          className="w-full border rounded px-2 py-1"
+          onChange={e => setSearchContent(e.target.value)}
+          placeholder="pesquisar..."
+        />
+      </>
       {/* Filtro por range de datas */}
       <div className="flex gap-4 items-center mb-2">
         <div>
@@ -175,7 +188,7 @@ export function ReservationsPanel({
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {/* Lista de Reservas */}
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             <Tabs defaultValue="pending" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="pending" className="flex items-center gap-2">
