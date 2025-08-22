@@ -140,7 +140,7 @@ export function ReservationsPanel({
       <>
         <input
           id="pesquisa"
-          className="w-full border rounded px-2 py-1"
+          className="w-full h-10 border rounded px-2 py-1"
           onChange={e => setSearchContent(e.target.value)}
           placeholder="pesquisar..."
         />
@@ -200,7 +200,7 @@ export function ReservationsPanel({
               </TabsList>
               <TabsContent value="pending" className="space-y-4">
                 <ScrollArea className="h-[600px]">
-                  <div className="space-y-4 pr-4">
+                  <div className="space-y-4">
                     {pendingReservations.map((reservation) => (
                       <ReservationCard
                         key={reservation.id}
