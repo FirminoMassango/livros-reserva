@@ -42,6 +42,7 @@ export interface CreateReservationData {
   pickup_location?: string;
   status?: string;
   notes?: string;
+  user_id?: string | null;
 }
 
 export function useReservations() {
@@ -107,11 +108,13 @@ export function useReservations() {
         return total + (item.book.price * item.quantity);
       }, 0);
 
+      console.log("reservationData.user_id",reservationData.user_id)
+
       // Criar a reserva sem user_id (para compradores)
       const { data: reservation, error: reservationError } = await supabase
         .from('reservations')
         .insert({
-          user_id: null, // Comprador não tem user_id
+          user_id: reservationData.user_id, // Comprador não tem user_id, excepto quando se trata do vendedor
           customer_name: reservationData.customer_name,
           customer_phone: reservationData.customer_phone,
           customer_alternative_phone: reservationData.customer_alternative_phone,
