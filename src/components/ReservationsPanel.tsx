@@ -142,7 +142,7 @@ export function ReservationsPanel({
       {/* Campo de pesquisa*/}
       {isSearchInputVisible &&
         <div className="m-0 p-0">
-          <div className="fixed top-0 left-0 w-full z-50 bg-white h-20 flex items-center">
+          <div className="fixed top-0 left-0 w-full z-50 bg-white h-32 border flex items-center">
             <input
               id="pesquisa"
               className="w-full h-10 border rounded px-2 py-1 mx-4"
