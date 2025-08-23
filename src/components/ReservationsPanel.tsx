@@ -12,6 +12,8 @@ import {
   ShoppingBag,
   AlertCircle,
   CreditCard,
+  Search,
+  X,
 } from "lucide-react";
 import { format, addDays, isAfter, isBefore, isEqual } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -48,6 +50,7 @@ export function ReservationsPanel({
   const [startDate, setStartDate] = useState<string>(fiveDaysAgo);
   const [endDate, setEndDate] = useState<string>(today);
   const [searchContent, setSearchContent] = useState<string>("");
+  const [isSearchInputVisible, setIsSearchInputVisible] = useState<boolean>(false);
 
 
 
@@ -137,16 +140,29 @@ export function ReservationsPanel({
         </Badge>
       </div>
       {/* Campo de pesquisa*/}
-      <>
-        <input
-          id="pesquisa"
-          className="w-full h-10 border rounded px-2 py-1"
-          onChange={e => setSearchContent(e.target.value)}
-          placeholder="pesquisar..."
-        />
-      </>
+      {isSearchInputVisible &&
+        <div className="m-0 p-0">
+          <div className="fixed top-0 left-0 w-full z-50 bg-white h-20 flex items-center">
+            <input
+              id="pesquisa"
+              className="w-full h-10 border rounded px-2 py-1 mx-4"
+              onChange={(e) => setSearchContent(e.target.value)}
+              placeholder="pesquisar..."
+            />
+            <X className="w-8 h-8 mr-3 text-muted-foreground cursor-pointer" 
+              onClick={() => {
+                setIsSearchInputVisible(!isSearchInputVisible)
+                setSearchContent("")
+                }
+              }
+            />
+          </div>
+        </div>
+      }
+      
       {/* Filtro por range de datas */}
-      <div className="flex gap-4 items-center mb-2">
+      <div className="flex justify-between">
+        <div className="flex gap-4 items-center mb-2">
         <div>
           <Label htmlFor="start-date" className="mr-2">Data inicial</Label>
           <input
@@ -171,6 +187,9 @@ export function ReservationsPanel({
         </div>
       </div>
 
+        <Search className="w-8 h-8 mr-3 text-muted-foreground cursor-pointer" onClick={() => setIsSearchInputVisible(!isSearchInputVisible)}/>
+      </div>
+      
       {filteredReservations.length === 0 ? (
         <Card>
           <CardContent className="flex items-center justify-center h-64">
