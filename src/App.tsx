@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { SellerBuyingView } from "./components/SellerBuyingView";
+import Vendedor from "./pages/Vendedor";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/vendedor" element={<Index />} />
+            <Route path="/vendedor" element={<Vendedor />} />
             <Route path="/buy/:id" element={<SellerBuyingView />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

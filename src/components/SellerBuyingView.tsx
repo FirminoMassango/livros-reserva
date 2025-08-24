@@ -279,6 +279,7 @@ export function SellerBuyingView() {
             },
           }))}
           total={totalPrice}
+          confirmButtonText='Finalizar Compra'
           onSubmit={handleReservationComplete}
           onBack={() => setShowReservationForm(false)}
         />
@@ -518,14 +519,15 @@ export function SellerBuyingView() {
       <CartAdjustmentDrawer
         isOpen={showCartAdjustment}
         onClose={() => setShowCartAdjustment(false)}
+        confirmButtonText="Confirmar Venda"
         selectedBook={selectedBookForAdjustment}
         showAddToCartButton={false}
         onAddToCart={addToCart}
         onReservationSubmit={async (formData, book, quantity) => {
           await createReservation({ ...formData, status: 'completed', user_id: id }, [{ book, quantity }]);
           toast({
-            title: "Reserva realizada!",
-            description: `${quantity}x ${book.title} reservados com sucesso.`,
+            title: "Venda efectuada!",
+            description: `${quantity}x ${book.title} vendidos com sucesso.`,
           });
         }}
       />

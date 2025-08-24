@@ -287,6 +287,7 @@ export function SimpleBuyerView() {
           total={totalPrice}
           onSubmit={handleReservationComplete}
           onBack={() => setShowReservationForm(false)}
+          confirmButtonText="Finalizar Reserva"
         />
 
         {showDownloadPrompt && pendingReservation && (
@@ -570,6 +571,7 @@ export function SimpleBuyerView() {
       <CartAdjustmentDrawer
         isOpen={showCartAdjustment}
         onClose={() => setShowCartAdjustment(false)}
+        confirmButtonText="Confirmar Reserva"
         selectedBook={selectedBookForAdjustment}
         showAddToCartButton={true}
         onAddToCart={addToCart}

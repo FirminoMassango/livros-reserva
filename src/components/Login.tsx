@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, UserPlus, LogIn } from 'lucide-react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
   onClose?: () => void;
@@ -18,6 +19,8 @@ export function Login({ onClose }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp } = useSupabaseAuth();
   const { toast } = useToast();
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +38,10 @@ export function Login({ onClose }: LoginProps) {
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo de volta!",
+
       });
       onClose?.();
+      navigate('/');
     }
 
     setIsLoading(false);
@@ -84,7 +89,7 @@ export function Login({ onClose }: LoginProps) {
             </TabsTrigger>
             <TabsTrigger value="register" className="flex items-center gap-2">
               <UserPlus className="w-4 h-4" />
-              Cadastrar
+              Criar Conta
             </TabsTrigger>
           </TabsList>
 

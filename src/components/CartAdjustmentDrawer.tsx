@@ -11,6 +11,7 @@ import { formatarValor } from '@/lib/utils';
 interface CartAdjustmentDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  confirmButtonText: string;
   selectedBook: Book | null;
   onAddToCart: (book: Book, quantity: number) => void;
   onReservationSubmit: (formData: any, book: Book, quantity: number) => void;
@@ -20,6 +21,7 @@ interface CartAdjustmentDrawerProps {
 export function CartAdjustmentDrawer({
   isOpen,
   onClose,
+  confirmButtonText,
   selectedBook,
   onAddToCart,
   onReservationSubmit,
@@ -59,7 +61,7 @@ export function CartAdjustmentDrawer({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Fazer Reserva</DialogTitle>
+            <DialogTitle>{confirmButtonText.includes("Venda") ? "Vender" : "Fazer Reserva"}</DialogTitle>
           </DialogHeader>
           <ReservationForm
             cartItems={[{
@@ -85,6 +87,7 @@ export function CartAdjustmentDrawer({
             total={selectedBook.price * quantity}
             onSubmit={handleReservationFormSubmit}
             onBack={() => setShowReservationForm(false)}
+            confirmButtonText={confirmButtonText}
           />
         </DialogContent>
       </Dialog>
@@ -158,7 +161,7 @@ export function CartAdjustmentDrawer({
           <div className="flex flex-col gap-2">
             <Button onClick={() => setShowReservationForm(true)}>
               <CalendarPlus className="w-4 h-4 mr-2" />
-              Reservar Agora
+              {confirmButtonText.includes("Venda") ? "Vender" : "Reservar Agora"}
             </Button>
             {showAddToCartButton && (
               <Button onClick={handleAddToCart} variant="secondary">

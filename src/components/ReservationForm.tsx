@@ -20,6 +20,7 @@ interface ReservationFormProps {
   onSubmit: (data: CreateReservationData & { payment_method: string }) => void;
   onBack: () => void;
   loading?: boolean;
+  confirmButtonText: string;
 }
 
 const paymentMethods = [
@@ -34,7 +35,8 @@ export function ReservationForm({
   total, 
   onSubmit, 
   onBack, 
-  loading = false 
+  loading = false,
+  confirmButtonText
 }: ReservationFormProps) {
   const [formData, setFormData] = useState<CreateReservationData & { payment_method: string }>({
     customer_name: '',
@@ -61,7 +63,7 @@ export function ReservationForm({
           <ArrowLeft className="w-4 h-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Confirmar Reserva</h1>
+          <h1 className="text-2xl font-bold">Confirmar  {confirmButtonText.includes("Venda") ? "Venda" : "Reserva"}</h1>
           <p className="text-muted-foreground">Preencha seus dados para finalizar</p>
         </div>
       </div>
@@ -76,7 +78,7 @@ export function ReservationForm({
               </TabsTrigger>
               <TabsTrigger value="summary" className="flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" />
-                Resumo da Reserva
+                Resumo da {confirmButtonText.includes("Venda") ? "Venda" : "Reserva"}
               </TabsTrigger>
             </TabsList>
             
@@ -166,7 +168,7 @@ export function ReservationForm({
                   className="w-full h-12 text-lg font-semibold"
                   disabled={loading || !formData.customer_name || !formData.customer_phone}
                 >
-                  {loading ? 'Processando...' : 'Finalizar Reserva'}
+                  {loading ? 'Processando...' : confirmButtonText}
                 </Button>
               </form>
             </TabsContent>
@@ -233,7 +235,7 @@ export function ReservationForm({
                   className="w-full h-12 text-lg font-semibold"
                   disabled={loading || !formData.customer_name || !formData.customer_phone}
                 >
-                  {loading ? 'Processando...' : 'Finalizar Reserva'}
+                  {loading ? 'Processando...' : confirmButtonText}
                 </Button>
               </div>
             </TabsContent>
