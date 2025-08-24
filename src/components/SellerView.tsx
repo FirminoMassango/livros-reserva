@@ -15,10 +15,13 @@ import {
   Calendar,
   TrendingUp,
   DollarSign,
-  ShoppingCart
+  ShoppingCart,
+  EllipsisVertical,
+  Search
 } from 'lucide-react';
 import { formatarValor } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export function SellerView() {
   const { profile, signOut, isAdmin } = useSupabaseAuth();
@@ -60,23 +63,18 @@ export function SellerView() {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-accent" />
-                  <span className="text-muted-foreground">
-                    {new Date().toLocaleDateString('pt-MZ')}
-                  </span>
-                </div>
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <ShoppingBag className="w-3 h-3" />
-                  {pendingReservations.length} pendentes
-                </Badge>
-              </div>
-              
-              <Button onClick={signOut} variant="outline" size="sm">
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <EllipsisVertical/>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel onClick={signOut} className='cursor-pointer flex align-middle items-center hover:bg-gray-200 text-red-700' >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    <span>Sair</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

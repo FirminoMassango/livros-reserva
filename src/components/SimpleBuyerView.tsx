@@ -24,6 +24,7 @@ import { Login } from "@/components/Login";
 import { Book } from "@/hooks/useBooks";
 import { formatarValor } from "@/lib/utils";
 import jsPDF from "jspdf";
+import { useLocation } from "react-router-dom";
 
 interface SimpleCartItem {
   id: string;
@@ -55,6 +56,12 @@ export function SimpleBuyerView() {
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
   const [pendingReservation, setPendingReservation] = useState<ReservationReference | null>(null);
   const downloadButtonRef = useRef<HTMLButtonElement>(null);
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  // Verifica se a rota atual é "/" ou "/vendedor"
+  const isVendedor = currentPath === "/vendedor";
 
   useEffect(() => {
     const stored = localStorage.getItem("reservation_references");
@@ -595,7 +602,8 @@ export function SimpleBuyerView() {
         </Button>
       )}
 
-      {!user && (
+      {isVendedor && (
+
         <Button
           onClick={() => setShowSellerLogin(true)}
           className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg z-50"

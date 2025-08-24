@@ -14,6 +14,7 @@ import {
   CreditCard,
   Search,
   X,
+  ListFilter,
 } from "lucide-react";
 import { format, addDays, isAfter, isBefore, isEqual } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -23,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { ReservationCard } from "./ReservationCard";
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface ReservationsPanelProps {
   reservations: Reservation[];
@@ -77,9 +79,17 @@ export function ReservationsPanel({
   });
 
 
+  const isAdminProfile = profile?.role === 'admin';
+
+
 
   // Filtra reservas pagas/concluídas (agora qualquer usuário vê todas)
-  const completedReservations = filteredReservations.filter(r => r.status === 'completed' && r.user_id === profile?.user_id && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))));
+  const completedReservations = 
+          isAdminProfile ?
+                filteredReservations.filter(r => r.status === 'completed' && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))))
+                :
+                filteredReservations.filter(r => r.status === 'completed' && r.user_id === profile?.user_id && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))));
+                
   // Pendentes sempre mostra todas
   const pendingReservations = filteredReservations.filter(r => r.status === 'pending' && ((String(r.reservation_number).includes(searchContent) || r.customer_name.toLowerCase().includes(searchContent.toLowerCase()))));
   // const pendingReservations = filteredReservations.filter(r => r.status === 'pending' || r.reservation_number === Number(searchContent));
@@ -134,10 +144,38 @@ export function ReservationsPanel({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Painel de Reservas</h2>
-        <Badge variant="secondary" className="text-sm">
-          {pendingReservations.length}{" "}
-          {reservations.length === 1 ? "reserva" : "reservas"}
-        </Badge>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="bg-white hover:bg-gray-100 hover:text-slate-700" size="sm">
+              Filtrar <ListFilter />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <div className="p-4">
+              <Label htmlFor="start-date" className="mr-2">Data inicial</Label>
+              <input
+                id="start-date"
+                type="date"
+                className="w-full border rounded px-2 py-1"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                max={endDate}
+              />
+            </div>
+            <DropdownMenuSeparator />
+            <div className="p-2">
+              <Label htmlFor="end-date" className="mr-2">Data final</Label>
+              <input
+                id="end-date"
+                type="date"
+                className="w-full border rounded px-2 py-1"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                min={startDate}
+              />
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       {/* Campo de pesquisa*/}
       {isSearchInputVisible &&
@@ -160,35 +198,8 @@ export function ReservationsPanel({
         </div>
       }
       
-      {/* Filtro por range de datas */}
-      <div className="flex justify-between">
-        <div className="flex gap-4 items-center mb-2">
-        <div>
-          <Label htmlFor="start-date" className="mr-2">Data inicial</Label>
-          <input
-            id="start-date"
-            type="date"
-            className="border rounded px-2 py-1"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            max={endDate}
-          />
-        </div>
-        <div>
-          <Label htmlFor="end-date" className="mr-2">Data final</Label>
-          <input
-            id="end-date"
-            type="date"
-            className="border rounded px-2 py-1"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            min={startDate}
-          />
-        </div>
-      </div>
-
-        <Search className="w-8 h-8 mr-3 text-muted-foreground cursor-pointer" onClick={() => setIsSearchInputVisible(!isSearchInputVisible)}/>
-      </div>
+      {/* Botão de Pesquisa */}
+      <Search className="fixed top-1 right-12 z-40 w-6 h-6 mr-3 text-muted-foreground cursor-pointer" onClick={() => setIsSearchInputVisible(!isSearchInputVisible)}/>
       
       {filteredReservations.length === 0 ? (
         <Card>
@@ -236,7 +247,7 @@ export function ReservationsPanel({
               </TabsContent>
               <TabsContent value="completed" className="space-y-4">
                 <ScrollArea className="h-[600px]">
-                  <div className="space-y-4 pr-4">
+                  <div className="space-y-4">
                     {completedReservations.map((reservation) => (
                       <ReservationCard
                         key={reservation.id}

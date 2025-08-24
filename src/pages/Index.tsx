@@ -5,6 +5,7 @@ import { SellerView } from '@/components/SellerView';
 import { Button } from '@/components/ui/button';
 import { UserCog } from 'lucide-react';
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function Index() {
   const { user, loading } = useSupabaseAuth();
@@ -44,15 +45,6 @@ export default function Index() {
 
   // Vista padrão para compradores (sem autenticação)
   return (
-    <div className="relative">
       <SimpleBuyerView />
-      <Button
-        onClick={() => setShowSellerLogin(true)}
-        className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg"
-        size="icon"
-      >
-        <UserCog className="w-6 h-6" />
-      </Button>
-    </div>
   );
 }
