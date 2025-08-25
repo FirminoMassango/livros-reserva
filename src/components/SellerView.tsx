@@ -109,13 +109,12 @@ export function SellerView() {
                       <p className="text-2xl font-bold text-foreground">
                         {completedReservations.length}
                       </p>
-                      <span className="mx-2">•</span>
-                      <span className='text-sm text-green-700'> 
+                    </div>
+                    <span className='text-sm text-green-700'> 
                         {
                           formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))
                         } MT
                       </span>
-                    </div>
                   </div>
                 </div>
               </div>
