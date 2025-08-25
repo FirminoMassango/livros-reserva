@@ -385,6 +385,7 @@ export function ReservationsPanel({
                       }}
                       className="w-full"
                     >
+                      {selectedReservation.status}
                       Confirmar Reserva
                     </Button>
                   </CardContent>
