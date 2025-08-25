@@ -369,7 +369,7 @@ export function ReservationsPanel({
                         Total: {formatarValor(selectedReservation.total_amount)} MT
                       </div>
                     </div>
-                    { selectedReservation.status && 
+                    { selectedReservation.status === 'pending' && 
                         <Button
                           onClick={() => {
                             if (selectedReservation) {
