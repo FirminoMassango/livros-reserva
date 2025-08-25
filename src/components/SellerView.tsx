@@ -94,6 +94,9 @@ export function SellerView() {
                     <p className="text-2xl font-bold text-foreground">
                       {pendingReservations.length}
                     </p>
+                    {/* <span className='text-sm text-slate-500'> 
+                      Global
+                    </span> */}
                   </div>
                 </div>
               </div>
@@ -104,17 +107,15 @@ export function SellerView() {
                     <TrendingUp className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Livros Vendidos</p>
-                    <div className='flex items-center content-center'>
-                      <p className="text-2xl font-bold text-foreground">
-                        {completedReservations.length}
-                      </p>
-                    </div>
+                    <p className="text-sm text-muted-foreground"> Vendidos</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {completedReservations.length}
+                    </p>
                     <span className='text-sm text-green-700'> 
-                        {
-                          formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))
-                        } MT
-                      </span>
+                      {
+                        formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))
+                      } MT
+                    </span>
                   </div>
                 </div>
               </div>
