@@ -369,25 +369,26 @@ export function ReservationsPanel({
                         Total: {formatarValor(selectedReservation.total_amount)} MT
                       </div>
                     </div>
-                    <Button
-                      onClick={() => {
-                        if (selectedReservation) {
-                          onUpdateStatus(
-                            selectedReservation.id,
-                            profile.user_id,
-                            "completed",
-                            notes
-                          );
-                          setSelectedReservation(null);
-                          setNotes("");
-                          setIsOpen(false);
-                        }
-                      }}
-                      className="w-full"
-                    >
-                      {selectedReservation.status}
-                      Confirmar Reserva
-                    </Button>
+                    { selectedReservation.status && 
+                        <Button
+                          onClick={() => {
+                            if (selectedReservation) {
+                              onUpdateStatus(
+                                selectedReservation.id,
+                                profile.user_id,
+                                "completed",
+                                notes
+                              );
+                              setSelectedReservation(null);
+                              setNotes("");
+                              setIsOpen(false);
+                            }
+                          }}
+                          className="w-full"
+                        >
+                          Confirmar Reserva
+                        </Button>
+                    }
                   </CardContent>
                 </Card>
               ) : (
