@@ -277,7 +277,7 @@ export function ReservationsPanel({
           >
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Detalhes da {selectedReservation.status === 'pending' ? 'Reserva' : 'Compra'}</DialogTitle>
+                <DialogTitle>Detalhes da {selectedReservation?.status === 'pending' ? 'Reserva' : 'Compra'}</DialogTitle>
               </DialogHeader>
               {selectedReservation ? (
                 <Card>
@@ -310,7 +310,7 @@ export function ReservationsPanel({
                     <Tabs defaultValue="observacoes" className="space-y-4">
                       <TabsList className="grid grid-cols-2 mb-4">
                         <TabsTrigger value="observacoes">Observações</TabsTrigger>
-                        <TabsTrigger value="livros">{selectedReservation.status === 'pending' ? 'Livros Reservados' : 'Livros Pagos'}</TabsTrigger>
+                        <TabsTrigger value="livros">{selectedReservation?.status === 'pending' ? 'Livros Reservados' : 'Livros Pagos'}</TabsTrigger>
                       </TabsList>
                       <TabsContent value="observacoes">
                         <div className="space-y-2">
@@ -369,7 +369,7 @@ export function ReservationsPanel({
                         Total: {formatarValor(selectedReservation.total_amount)} MT
                       </div>
                     </div>
-                    { selectedReservation.status === 'pending' && 
+                    { selectedReservation?.status === 'pending' && 
                         <Button
                           onClick={() => {
                             if (selectedReservation) {
