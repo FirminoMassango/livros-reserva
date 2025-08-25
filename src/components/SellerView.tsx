@@ -105,23 +105,17 @@ export function SellerView() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Livros Vendidos</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {completedReservations.length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-xl p-4 border">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Valor Total</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))}
-                    </p>
+                    <div className='flex items-center content-center'>
+                      <p className="text-2xl font-bold text-foreground">
+                        {completedReservations.length}
+                      </p>
+                      <span className="mx-2">•</span>
+                      <span className='text-sm text-green-700'> 
+                        {
+                          formatarValor(filteredReservations.reduce((acc, r) => acc + r.total_amount, 0))
+                        } MT
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
