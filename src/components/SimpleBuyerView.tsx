@@ -371,7 +371,7 @@ export function SimpleBuyerView() {
               id="hero-title"
               className="text-3xl md:text-5xl font-bold text-foreground"
             >
-              Reserve seus livros em minutos!
+              Compre seus livros em minutos!
             </h2>
             <Sparkles
               className="w-8 h-8 text-accent animate-pulse"
@@ -379,7 +379,7 @@ export function SimpleBuyerView() {
             />
           </div>
           <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-            Encontre, reserve e levante. Simples e rápido!
+            Encontre, compre e levante. Simples e rápido!
           </p>
           <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2 hover:text-foreground transition-colors">
