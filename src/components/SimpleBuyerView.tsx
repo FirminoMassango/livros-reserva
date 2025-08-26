@@ -338,7 +338,6 @@ export function SimpleBuyerView() {
                 <h1 className="text-xl font-bold text-foreground">
                   ePOSSE
                 </h1>
-                <p className="text-sm text-muted-foreground">OSOMA</p>
               </div>
             </div>
 
