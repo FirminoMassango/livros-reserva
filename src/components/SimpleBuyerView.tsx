@@ -336,9 +336,9 @@ export function SimpleBuyerView() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">
-                  Lorem Ipsum
+                  ePOSSE
                 </h1>
-                <p className="text-sm text-muted-foreground">Moçambique</p>
+                <p className="text-sm text-muted-foreground">OSOMA</p>
               </div>
             </div>
 
