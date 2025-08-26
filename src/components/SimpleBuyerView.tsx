@@ -382,17 +382,7 @@ export function SimpleBuyerView() {
             Encontre, compre e levante. Simples e rápido!
           </p>
           <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-              <CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
-              <span>Pagamento na retirada</span>
-            </div>
-            <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-              <CheckCircle
-                className="w-5 h-5 text-green-600"
-                aria-hidden="true"
-              />
-              <span>Reserva garantida</span>
-            </div>
+            
           </div>
         </div>
       </section>
