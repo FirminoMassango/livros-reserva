@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ePOSSE</string>
+    <string name="title_activity_main">ePOSSE</string>
+    <string name="package_name">mz.co.osoma</string>
+    <string name="custom_url_scheme">mz.co.osoma</string>
+</resources>
