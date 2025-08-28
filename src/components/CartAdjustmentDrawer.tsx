@@ -7,6 +7,7 @@ import { Plus, Minus, ShoppingCart, CalendarPlus } from 'lucide-react';
 import { Book } from '@/hooks/useBooks';
 import { ReservationForm } from '@/components/ReservationForm';
 import { formatarValor } from '@/lib/utils';
+import { CheckoutForm } from './CheckoutForm';
 
 interface CartAdjustmentDrawerProps {
   isOpen: boolean;
@@ -63,7 +64,7 @@ export function CartAdjustmentDrawer({
           <DialogHeader>
             <DialogTitle>{confirmButtonText.includes("Venda") ? "Vender" : "Fazer Reserva"}</DialogTitle>
           </DialogHeader>
-          <ReservationForm
+          <CheckoutForm
             cartItems={[{
               id: `temp-${selectedBook.id}`,
               book_id: selectedBook.id,

@@ -18,13 +18,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ReservationForm } from "@/components/ReservationForm";
+// import { ReservationForm } from "@/components/ReservationForm";
 import { CartAdjustmentDrawer } from "@/components/CartAdjustmentDrawer";
 import { Login } from "@/components/Login";
 import { Book } from "@/hooks/useBooks";
 import { formatarValor } from "@/lib/utils";
 import jsPDF from "jspdf";
 import { useLocation } from "react-router-dom";
+import { ReservationForm } from "./ReservationForm";
+import { CheckoutForm } from "./CheckoutForm";
 
 interface SimpleCartItem {
   id: string;
@@ -263,7 +265,7 @@ export function SimpleBuyerView() {
   if (showReservationForm) {
     return (
       <>
-        <ReservationForm
+        <CheckoutForm
           cartItems={cartItems.map((item) => ({
             id: item.id,
             book_id: item.book.id,
@@ -405,7 +407,8 @@ export function SimpleBuyerView() {
               {books.map((book) => (
                 <Card
                   key={book.id}
-                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleSellerAdjustment(book)}
                 >
                   <div className="aspect-[2/3] sm:aspect-[3/4] relative overflow-hidden">
                     <img
@@ -431,7 +434,6 @@ export function SimpleBuyerView() {
                         {formatarValor(book.price)} MT
                       </span>
                       <Button
-                        onClick={() => handleSellerAdjustment(book)}
                         disabled={book.stock === 0}
                         size="sm"
                       >
